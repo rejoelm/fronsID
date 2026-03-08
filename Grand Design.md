@@ -1,4 +1,4 @@
-# CLAUDE.md — FRONS & FRONSCIERS Complete Project Specification
+# FRONS & FRONSCIERS Complete Project Specification
 
 > **This is the single source of truth for the entire FRONS platform.**
 > Every architecture decision, database table, smart contract instruction,
