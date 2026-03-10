@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { WalletConnection } from "@/components/wallet-connection";
-import { usePrivy } from "@privy-io/react-auth";
+import { useSafePrivy } from "@/hooks/useSafePrivy";
 import { useSolanaWallets } from "@privy-io/react-auth/solana";
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/context/LoadingContext";
@@ -35,7 +35,7 @@ import HeaderImage from "@/components/header-image";
 
 export default function SubmitManuscriptPage() {
   const { toast } = useToast();
-  const { authenticated: connected, authenticated } = usePrivy();
+  const { authenticated: connected, authenticated } = useSafePrivy();
   const { wallets: solanaWallets } = useSolanaWallets();
   const router = useRouter();
   const { isLoading } = useLoading();
@@ -304,7 +304,7 @@ export default function SubmitManuscriptPage() {
 
   if (!connected || !validSolanaPublicKey) {
     return (
-      <div className="min-h-screen bg-white flex w-full">
+      <div className="min-h-screen bg-off-white dark:bg-navy-900 flex w-full">
         <div className="hidden lg:block">
           <Sidebar>
             <OverviewSidebar connected={connected} />
@@ -326,7 +326,7 @@ export default function SubmitManuscriptPage() {
 
   if (cvChecking || !cvVerified) {
     return (
-      <div className="min-h-screen bg-white flex w-full">
+      <div className="min-h-screen bg-off-white dark:bg-navy-900 flex w-full">
         <div className="hidden lg:block">
           <Sidebar>
             <OverviewSidebar connected={connected} />
@@ -337,7 +337,7 @@ export default function SubmitManuscriptPage() {
             <div className="container max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
               <div className="space-y-6">
                 {/* Form Container Skeleton */}
-                <Card className="shadow-xl border border-gray-100/80 rounded-2xl bg-white/95 backdrop-blur-sm transition-all duration-300">
+                <Card className="shadow-xl border border-navy/5 rounded-2xl bg-white/95 backdrop-blur-sm transition-all duration-300">
                   <CardContent className="p-0">
                     {/* Tab Navigation Skeleton */}
                     <div className="border-b border-gray-100">
@@ -407,7 +407,7 @@ export default function SubmitManuscriptPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex w-full">
+    <div className="min-h-screen bg-off-white flex w-full">
       <div className="hidden lg:block">
         <Sidebar>
           <OverviewSidebar connected={connected} />
@@ -423,7 +423,7 @@ export default function SubmitManuscriptPage() {
                 <SubmissionProgress submitProgress={submitProgress} />
               )}
 
-              <Card className="shadow-xl border border-gray-100/80 rounded-2xl bg-white/95 backdrop-blur-sm transition-all duration-300">
+              <Card className="shadow-xl border border-navy/5 rounded-2xl bg-white/95 backdrop-blur-sm transition-all duration-300">
                 <CardContent className="p-0">
                   <Tabs
                     value={activeTab}

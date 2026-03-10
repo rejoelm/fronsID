@@ -16,7 +16,8 @@ pub struct DOCINFTMinted {
     pub publication_date: i64,
     pub authors_share: u16,
     pub platform_share: u16,
-    pub reviewers_share: u16,
+    pub pool_share: u16,
+    pub reserve_share: u16,
 }
 
 pub fn handler(
@@ -27,7 +28,7 @@ pub fn handler(
     let registry = &mut ctx.accounts.doci_registry;
     let manuscript = &mut ctx.accounts.manuscript;
 
-    require!(manuscript.status == "Accepted", crate::error::FronsciersError::ManuscriptNotAccepted);
+    require!(manuscript.is_accepted(), crate::error::FronsciersError::ManuscriptNotAccepted);
 
     let doci = registry.generate_doci();
 
@@ -62,20 +63,22 @@ pub fn handler(
     doci_manuscript.access_count = 0;
     doci_manuscript.metadata_uri = format!("https://fronsciers.com/api/manuscript/{}/metadata", doci);
     doci_manuscript.royalty_config = RoyaltyConfig {
-        authors_share: 5000,    // 50%
-        platform_share: 2000,   // 20%
-        reviewers_share: 3000,  // 30%
+        authors_share: AUTHOR_DIRECT_BPS,     // 10%
+        platform_share: PLATFORM_FEE_BPS,     // 40%
+        pool_share: SHARING_POOL_BPS,         // 30%
+        reserve_share: PROTOCOL_RESERVE_BPS,  // 20%
     };
     doci_manuscript.bump = doci_manuscript_bump;
 
     manuscript.doci = Some(doci.clone());
     manuscript.doci_mint = Some(doci_mint_key);
     manuscript.publication_date = Some(publication_date);
-    manuscript.status = "Published".to_string();
+    manuscript.status = ManuscriptStatus::Published;
 
     let authors_share = doci_manuscript.royalty_config.authors_share;
     let platform_share = doci_manuscript.royalty_config.platform_share;
-    let reviewers_share = doci_manuscript.royalty_config.reviewers_share;
+    let pool_share = doci_manuscript.royalty_config.pool_share;
+    let reserve_share = doci_manuscript.royalty_config.reserve_share;
 
     let doci_seeds = &[
         DOCI_MANUSCRIPT_SEED,
@@ -105,7 +108,8 @@ pub fn handler(
         publication_date,
         authors_share,
         platform_share,
-        reviewers_share,
+        pool_share,
+        reserve_share,
     });
 
     msg!("DOCI NFT minted: {} for manuscript: {}", doci, manuscript.ipfs_hash);

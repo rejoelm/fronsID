@@ -40,8 +40,10 @@ pub struct VerifyCV<'info> {
     )]
     pub user: Account<'info, User>,
 
+    /// CHECK: The wallet address that was used to derive the user PDA seed. Only used for seed derivation.
     pub user_wallet: UncheckedAccount<'info>,
 
+    /// CHECK: The backend authority that signed the CV verification. Signature is validated off-chain.
     pub backend_authority: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>,

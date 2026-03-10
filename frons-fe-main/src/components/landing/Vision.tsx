@@ -71,17 +71,17 @@ export function Vision() {
   return (
     <section
       ref={sectionRef}
-      className="py-20 sm:py-28 bg-gradient-to-b from-off-white to-white"
+      className="py-20 sm:py-28 bg-gradient-to-b from-off-white to-white dark:from-navy-900 dark:to-navy-800"
     >
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">
           <span className="text-sm font-semibold text-orange-accent tracking-wider uppercase">
             Our Vision
           </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-navy tracking-tight">
+          <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-navy dark:text-white tracking-tight">
             Built on principles, not hype
           </h2>
-          <p className="mt-3 text-base text-navy/50 max-w-xl mx-auto">
+          <p className="mt-3 text-base text-navy/50 dark:text-white/50 max-w-xl mx-auto">
             The core design principles that guide every decision we make.
           </p>
         </div>
@@ -90,7 +90,7 @@ export function Vision() {
           {visionPoints.map((point) => (
             <div
               key={point.title}
-              className="vision-item flex items-start gap-4 p-6 rounded-2xl bg-white border border-navy/5 hover:shadow-md transition-all duration-300"
+              className="vision-item flex items-start gap-4 p-6 rounded-2xl bg-white dark:bg-white/5 border border-navy/5 dark:border-white/10 hover:shadow-md transition-all duration-300"
             >
               <div
                 className={`flex-shrink-0 w-11 h-11 rounded-xl ${point.bg} flex items-center justify-center`}
@@ -98,10 +98,10 @@ export function Vision() {
                 <point.icon className={`w-5 h-5 ${point.color}`} />
               </div>
               <div>
-                <h3 className="text-base font-semibold text-navy">
+                <h3 className="text-base font-semibold text-navy dark:text-white">
                   {point.title}
                 </h3>
-                <p className="mt-1.5 text-sm text-navy/50 leading-relaxed">
+                <p className="mt-1.5 text-sm text-navy/50 dark:text-white/50 leading-relaxed">
                   {point.description}
                 </p>
               </div>

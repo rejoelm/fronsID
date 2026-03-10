@@ -7,6 +7,7 @@ pub fn handler(
   ipfs_hash: String,
 ) -> Result<()> {
   require!(!ipfs_hash.is_empty(), FronsciersError::MissingIpfsHash);
+  require!(ctx.accounts.protocol_state.is_active(), FronsciersError::ProtocolPaused);
   require!(ctx.accounts.user.meets_submission_requirements(), FronsciersError::SubmissionRequirementsNotMet);
 
   let manuscript = &mut ctx.accounts.manuscript;
@@ -14,12 +15,12 @@ pub fn handler(
   
   manuscript.author = user.get_active_wallet();
   manuscript.ipfs_hash = ipfs_hash;
-  manuscript.status = "Pending".to_string();
+  manuscript.status = ManuscriptStatus::Pending;
   manuscript.reviewers = vec![];
   manuscript.decisions = vec![];
   manuscript.submission_time = Clock::get()?.unix_timestamp;
 
-  //cpi = cross program invocation (escrow)
+  // CPI: transfer submission fee to escrow
   let cpi_accounts = Transfer {
     from: ctx.accounts.author_usd_account.to_account_info(),
     to: ctx.accounts.escrow_usd_account.to_account_info(),
@@ -28,6 +29,10 @@ pub fn handler(
   let cpi_program = ctx.accounts.token_program.to_account_info();
   let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
   token::transfer(cpi_context, SUBMISSION_FEE)?;
+
+  // Update protocol stats
+  let protocol = &mut ctx.accounts.protocol_state;
+  protocol.total_submissions += 1;
   
   msg!("Manuscript submitted successfully {}", manuscript.ipfs_hash);
   Ok(())
@@ -48,6 +53,13 @@ pub struct SubmitManuscript<'info> {
         bump = user.bump
     )]
     pub user: Account<'info, User>,
+
+    #[account(
+        mut,
+        seeds = [PROTOCOL_SEED],
+        bump = protocol_state.bump
+    )]
+    pub protocol_state: Account<'info, ProtocolState>,
     
     #[account(mut)]
     pub author: Signer<'info>,

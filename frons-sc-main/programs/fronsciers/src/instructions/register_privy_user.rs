@@ -74,6 +74,7 @@ pub struct RegisterPrivyUser<'info> {
     )]
     pub user: Account<'info, User>,
 
+    /// CHECK: This is the Privy-generated embedded wallet address used as PDA seed. No on-chain validation needed — the wallet key is only used to derive the user PDA seed.
     pub embedded_wallet: UncheckedAccount<'info>,
 
     #[account(mut)]

@@ -2,10 +2,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePrivy } from "@privy-io/react-auth";
+import { useSafePrivy } from "@/hooks/useSafePrivy";
 import { useSidebar } from "@/components/ui/sidebar";
 
 import { WalletConnection } from "@/components/wallet-connection";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Navbar,
   NavBody,
@@ -50,7 +51,7 @@ const FronciersLogo = () => {
 };
 
 export function Header() {
-  const { authenticated } = usePrivy();
+  const { authenticated, privyConfigured } = useSafePrivy();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Navigation items for authenticated users
@@ -98,20 +99,21 @@ export function Header() {
             <FronciersLogo />
           </div>
 
-          {authenticated && <NavItems items={navItems} />}
+          <NavItems items={navItems} />
 
-          <div className="flex items-center gap-4">
-            {/* <NavbarButton
-              as={Link}
-              href="/register-institution"
-              variant="secondary"
-              className="text-sm font-semibold -mr-2"
-            >
-              Register Institution
-            </NavbarButton> */}
-
-            <div className="flex items-center ">
-              <WalletConnection />
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <div className="flex items-center">
+              {privyConfigured ? (
+                <WalletConnection />
+              ) : (
+                <Link
+                  href="/overview"
+                  className="px-5 py-2 rounded-full bg-navy text-white text-sm font-semibold hover:bg-navy/90 transition-colors"
+                >
+                  Get Started
+                </Link>
+              )}
             </div>
           </div>
         </NavBody>
@@ -133,8 +135,7 @@ export function Header() {
             isOpen={isMobileMenuOpen}
             onClose={() => setIsMobileMenuOpen(false)}
           >
-            {authenticated &&
-              navItems.map((item, idx) => (
+            {navItems.map((item, idx) => (
                 <div key={`mobile-link-${idx}`} className="w-full flex justify-center">
                   <Link
                     href={item.link}
@@ -160,21 +161,23 @@ export function Header() {
               ))}
 
             <div className="flex w-full flex-col items-center gap-4 mt-4">
-              {/* <NavbarButton
-                as={Link}
-                href="/register-institution"
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="secondary"
-                className="w-full text-left"
-              >
-                Register Institution
-              </NavbarButton> */}
-
               <div className="w-full text-center">
-                <p className="font-medium mb-2 text-gray-900 dark:text-gray-100">
-                  Connect Wallet
-                </p>
-                <WalletConnection />
+                {privyConfigured ? (
+                  <>
+                    <p className="font-medium mb-2 text-gray-900 dark:text-gray-100">
+                      Connect Wallet
+                    </p>
+                    <WalletConnection />
+                  </>
+                ) : (
+                  <Link
+                    href="/overview"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="inline-block px-6 py-2.5 rounded-full bg-navy text-white text-sm font-semibold hover:bg-navy/90 transition-colors"
+                  >
+                    Get Started
+                  </Link>
+                )}
               </div>
             </div>
           </MobileNavMenu>

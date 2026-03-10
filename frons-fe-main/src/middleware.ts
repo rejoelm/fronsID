@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const UNAUTHENTICATED_PAGES = ["/", "/refresh"];
+const UNAUTHENTICATED_PAGES = ["/", "/refresh", "/search", "/leaderboard", "/article"];
 
 function isPublicUserProfile(pathname: string): boolean {
   const usernamePattern = /^\/[a-zA-Z0-9_-]+$/;

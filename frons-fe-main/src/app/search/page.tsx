@@ -200,9 +200,8 @@ export default function SearchPage() {
           {!loading && results.length > 0 && (
             <div className="space-y-4">
               {results.map((result) => (
-                <Card
+                <div
                   key={result.id}
-                  className="bg-white border-navy/5 hover:shadow-md transition-all duration-300 cursor-pointer group overflow-hidden"
                   onClick={() => {
                     const url =
                       result.ipfsUrls?.manuscript ||
@@ -211,6 +210,10 @@ export default function SearchPage() {
                         : "#");
                     window.open(url, "_blank");
                   }}
+                  className="cursor-pointer"
+                >
+                <Card
+                  className="bg-white border-navy/5 hover:shadow-md transition-all duration-300 group overflow-hidden"
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
@@ -265,6 +268,7 @@ export default function SearchPage() {
                     </div>
                   </CardContent>
                 </Card>
+                </div>
               ))}
             </div>
           )}

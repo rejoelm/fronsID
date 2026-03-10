@@ -102,17 +102,17 @@ export function Features() {
   return (
     <section
       ref={sectionRef}
-      className="py-20 sm:py-28 bg-gradient-to-b from-white to-off-white"
+      className="py-20 sm:py-28 bg-gradient-to-b from-white to-off-white dark:from-navy-800 dark:to-navy-900"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">
           <span className="text-sm font-semibold text-orange-accent tracking-wider uppercase">
             The Ecosystem
           </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-navy tracking-tight">
+          <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-navy dark:text-white tracking-tight">
             Four products. One mission.
           </h2>
-          <p className="mt-3 text-base text-navy/50 max-w-xl mx-auto">
+          <p className="mt-3 text-base text-navy/50 dark:text-white/50 max-w-xl mx-auto">
             True data ownership, transparent science, and fair compensation for
             researchers — all connected by Solana blockchain.
           </p>
@@ -122,7 +122,7 @@ export function Features() {
           {products.map((product) => (
             <div
               key={product.name}
-              className="feature-card group relative overflow-hidden rounded-2xl border border-navy/5 bg-white hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
+              className="feature-card group relative overflow-hidden rounded-2xl border border-navy/5 dark:border-white/10 bg-white dark:bg-white/5 hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
             >
               {/* Colored header */}
               <div className={`${product.color} p-6 pb-8`}>
@@ -144,14 +144,14 @@ export function Features() {
 
               {/* Content */}
               <div className="p-6 pt-5">
-                <p className="text-sm text-navy/60 leading-relaxed">
+                <p className="text-sm text-navy/60 dark:text-white/60 leading-relaxed">
                   {product.description}
                 </p>
                 <ul className="mt-4 space-y-2">
                   {product.features.map((f) => (
                     <li
                       key={f}
-                      className="flex items-center gap-2 text-xs text-navy/50"
+                      className="flex items-center gap-2 text-xs text-navy/50 dark:text-white/50"
                     >
                       <div className="w-1.5 h-1.5 rounded-full bg-orange-accent flex-shrink-0" />
                       {f}
@@ -161,7 +161,7 @@ export function Features() {
                 {product.badge === "Live" && (
                   <a
                     href={product.href}
-                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-orange-accent transition-colors"
+                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-navy dark:text-white hover:text-orange-accent transition-colors"
                   >
                     Get Started
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />

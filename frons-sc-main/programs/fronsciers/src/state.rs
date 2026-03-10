@@ -34,13 +34,23 @@ pub struct User {
   pub bump: u8
 }
 
+// ── Grand Design: ManuscriptStatus enum ──
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
+pub enum ManuscriptStatus {
+    Pending,
+    InReview,
+    Accepted,
+    Rejected,
+    Published,
+}
+
 #[account]
 pub struct Manuscript {
   pub author: Pubkey,
   pub ipfs_hash: String,
-  pub status: String, // pending, accepted, rejected, published
+  pub status: ManuscriptStatus,
   pub reviewers: Vec<Pubkey>,
-  pub decisions: Vec<String>, //  accepted, rejected
+  pub decisions: Vec<String>,
   pub submission_time: i64,
   pub doci: Option<String>,
   pub doci_mint: Option<Pubkey>,
@@ -52,6 +62,41 @@ pub struct Manuscript {
 pub struct EscrowAccount {
   pub authority: Pubkey,
   pub bump: u8,
+}
+
+// ── Grand Design: Protocol State ──
+// Holds wallet addresses for the 4-way revenue split and global config
+#[account]
+pub struct ProtocolState {
+    pub authority: Pubkey,           // admin who can update config
+    pub treasury: Pubkey,            // platform fee wallet (40% of submissions)
+    pub sharing_pool: Pubkey,        // sharing pool wallet (30% of submissions)
+    pub reserve: Pubkey,             // protocol reserve wallet (20% of submissions)
+    pub total_submissions: u64,
+    pub total_citations: u64,
+    pub total_revenue_usdc: u64,
+    pub current_epoch: u64,          // for monthly pool distribution cycles
+    pub platform_fee_bps: u16,
+    pub pool_fee_bps: u16,
+    pub author_fee_bps: u16,
+    pub reserve_fee_bps: u16,
+    pub citation_fee: u64,
+    pub submission_fee: u64,
+    pub paused: bool,
+    pub bump: u8,
+}
+
+// ── Grand Design: Author Vault ──
+// Per-author earnings tracker for citation revenue + pool distributions
+#[account]
+pub struct AuthorVault {
+    pub author: Pubkey,
+    pub total_earned: u64,           // lifetime USDC earned
+    pub claimable: u64,              // USDC available to withdraw
+    pub total_citations: u64,        // lifetime citation count
+    pub impact_score: u64,           // used for pool distribution ranking
+    pub last_claim_epoch: u64,       // last epoch when author claimed
+    pub bump: u8,
 }
 
 // DOCI NFT Account
@@ -72,11 +117,13 @@ pub struct DOCIManuscript {
     pub bump: u8
 }
 
+// Updated: 4-way royalty split matching Grand Design
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct RoyaltyConfig {
-    pub authors_share: u16,
-    pub platform_share: u16,
-    pub reviewers_share: u16,
+    pub authors_share: u16,       // BPS — author direct
+    pub platform_share: u16,      // BPS — platform treasury
+    pub pool_share: u16,          // BPS — sharing pool
+    pub reserve_share: u16,       // BPS — protocol reserve
 }
 
 #[account]
@@ -144,7 +191,11 @@ impl User {
 
 impl Manuscript {
   pub fn is_pending(&self) -> bool {
-    self.status == "Pending"
+    self.status == ManuscriptStatus::Pending
+  }
+
+  pub fn is_accepted(&self) -> bool {
+    self.status == ManuscriptStatus::Accepted
   }
 
   pub fn has_reviewer(&self, reviewer: &Pubkey) -> bool {
@@ -163,5 +214,11 @@ impl Manuscript {
 impl DOCIRegistry {
     pub fn generate_doci(&self) -> String {
         format!("10.fronsciers/manuscript.{}.{:04}", self.current_year, self.next_sequence)
+    }
+}
+
+impl ProtocolState {
+    pub fn is_active(&self) -> bool {
+        !self.paused
     }
 }

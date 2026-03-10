@@ -21,7 +21,7 @@ import {
   AlertCircleIcon,
   RefreshCwIcon,
 } from "lucide-react";
-import { usePrivy } from "@privy-io/react-auth";
+import { useSafePrivy } from "@/hooks/useSafePrivy";
 import { useSolanaWallets } from "@privy-io/react-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OverviewSidebar } from "@/components/overview-sidebar";
@@ -32,7 +32,7 @@ import {
 } from "@/hooks/useManuscriptsOverview";
 
 export default function PublishedManuscriptsPage() {
-  const { authenticated } = usePrivy();
+  const { authenticated } = useSafePrivy();
   const { wallets } = useSolanaWallets();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -78,7 +78,7 @@ export default function PublishedManuscriptsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex w-full">
+    <div className="min-h-screen bg-off-white dark:bg-navy-900 flex w-full">
       <div className="hidden lg:block">
         <Sidebar>
           <OverviewSidebar connected={authenticated} />
@@ -91,10 +91,10 @@ export default function PublishedManuscriptsPage() {
             <div className="mb-4 sm:mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-1">
+                  <h1 className="text-xl sm:text-2xl font-semibold text-navy mb-1">
                     Published Research
                   </h1>
-                  <p className="text-xs sm:text-sm text-gray-500">
+                  <p className="text-xs sm:text-sm text-navy/40">
                     Browse peer-reviewed manuscripts with complete review verification
                   </p>
                 </div>
@@ -102,7 +102,7 @@ export default function PublishedManuscriptsPage() {
                   <Button
                     onClick={refreshData}
                     variant="outline"
-                    className="flex items-center space-x-2"
+                    className="flex items-center space-x-2 border-navy/10 text-navy hover:bg-lavender-light"
                     disabled={loading}
                   >
                     <RefreshCwIcon
@@ -119,7 +119,7 @@ export default function PublishedManuscriptsPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-3 items-start sm:items-center justify-between">
                 <div className="w-full sm:flex-1">
                   <div className="relative w-full sm:max-w-md">
-                    <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-navy/30 h-4 w-4" />
                     <Input
                       placeholder="Search manuscripts, authors, or abstracts..."
                       value={searchTerm}
@@ -231,25 +231,25 @@ export default function PublishedManuscriptsPage() {
                           }
                           className="cursor-pointer group"
                         >
-                          <Card className="h-full border border-gray-100 hover:border-gray-200 transition-all duration-200 bg-white hover:shadow-sm">
+                          <Card className="h-full border border-navy/5 hover:border-navy/10 transition-all duration-200 bg-white hover:shadow-md">
                             <CardContent className="p-3 sm:p-4 space-y-3">
                               <div className="flex items-start justify-between">
                                 <Badge
                                   variant="secondary"
-                                  className="text-xs px-2 py-1 bg-gray-100 text-gray-700"
+                                  className="text-xs px-2 py-1 bg-lavender text-navy border-0"
                                 >
                                   {manuscript.category[0] || "Research"}
                                 </Badge>
-                                <div className="flex items-center space-x-1 text-gray-400 group-hover:text-gray-600 transition-colors">
+                                <div className="flex items-center space-x-1 text-navy/20 group-hover:text-orange-accent transition-colors">
                                   <ExternalLinkIcon className="h-3 w-3" />
                                 </div>
                               </div>
 
-                              <h3 className="font-medium text-sm sm:text-base text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                              <h3 className="font-medium text-sm sm:text-base text-navy group-hover:text-orange-accent transition-colors line-clamp-2 leading-snug">
                                 {manuscript.title}
                               </h3>
 
-                              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                              <div className="flex items-center space-x-2 text-sm text-navy/50">
                                 <UserIcon className="h-3 w-3" />
                                 <span className="line-clamp-1 text-xs">
                                   {manuscript.author}
@@ -257,14 +257,14 @@ export default function PublishedManuscriptsPage() {
                               </div>
 
                               {manuscript.abstract && (
-                                <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                                <p className="text-xs text-navy/40 line-clamp-2 leading-relaxed">
                                   {manuscript.abstract}
                                 </p>
                               )}
 
                               {/* Review Information */}
                               {manuscript.reviewInfo && (
-                                <div className="flex items-center space-x-4 text-xs text-gray-600 bg-green-50 p-2 rounded">
+                                <div className="flex items-center space-x-4 text-xs text-navy/60 bg-lavender-light p-2 rounded">
                                   <span>
                                     ✅ {manuscript.reviewInfo.reviewsCompleted} reviews
                                   </span>
@@ -275,7 +275,7 @@ export default function PublishedManuscriptsPage() {
                               )}
 
                               <div className="flex items-center justify-between pt-1">
-                                <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                <div className="flex items-center space-x-1 text-xs text-navy/30">
                                   <CalendarIcon className="h-3 w-3" />
                                   <span>
                                     {formatDate(manuscript.publishedDate)}
@@ -290,13 +290,13 @@ export default function PublishedManuscriptsPage() {
                                         <Badge
                                           key={index}
                                           variant="outline"
-                                          className="text-xs px-1.5 py-0.5 border-gray-200 text-gray-500"
+                                          className="text-xs px-1.5 py-0.5 border-navy/10 text-navy/50"
                                         >
                                           {cat}
                                         </Badge>
                                       ))}
                                     {manuscript.category.length > 2 && (
-                                      <span className="text-xs text-gray-400">
+                                      <span className="text-xs text-navy/30">
                                         +{manuscript.category.length - 2}
                                       </span>
                                     )}

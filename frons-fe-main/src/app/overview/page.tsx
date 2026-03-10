@@ -27,7 +27,8 @@ import {
   FileTextIcon,
   PlusIcon,
 } from "lucide-react";
-import { usePrivy, useSolanaWallets } from "@privy-io/react-auth";
+import { useSolanaWallets } from "@privy-io/react-auth";
+import { useSafePrivy } from "@/hooks/useSafePrivy";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Sidebar } from "@/components/ui/sidebar";
 import { OverviewSidebar } from "@/components/overview-sidebar";
@@ -45,7 +46,7 @@ import { WalletPanel } from "@/components/overview";
 
 export default function OverviewPage() {
   const router = useRouter();
-  const { user, authenticated } = usePrivy();
+  const { user, authenticated } = useSafePrivy();
   const { wallets } = useSolanaWallets();
   const connected = authenticated;
   const publicKey = getPrimarySolanaWalletAddress(wallets);
@@ -159,7 +160,7 @@ export default function OverviewPage() {
 
   if (!isReady) {
     return (
-      <div className="min-h-screen bg-white flex w-full">
+      <div className="min-h-screen bg-off-white dark:bg-navy-900 flex w-full">
         <div className="hidden lg:block">
           <Sidebar>
             <OverviewSidebar connected={connected} />
@@ -293,13 +294,13 @@ export default function OverviewPage() {
 
   if (!connected || !isClient) {
     return (
-      <div className="min-h-screen bg-white flex w-full justify-center items-center">
+      <div className="min-h-screen bg-off-white flex w-full justify-center items-center">
         <Sidebar>
           <OverviewSidebar connected={connected} />
         </Sidebar>
         <div className="flex-1">
           <div className="container max-w-full mx-auto py-8 flex flex-col items-center justify-center">
-            <h2 className="text-2xl font-semibold text-primary mb-2 text-center justify-center">
+            <h2 className="text-2xl font-semibold text-navy mb-2 text-center justify-center">
               Authentication Required
             </h2>
             <p className="text-muted-foreground mb-4 text-sm text-center">
@@ -319,7 +320,7 @@ export default function OverviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex w-full">
+    <div className="min-h-screen bg-off-white flex w-full">
       <div className="hidden lg:block">
         <Sidebar>
           <OverviewSidebar connected={connected} />
@@ -331,11 +332,11 @@ export default function OverviewPage() {
             {/* User Info - Mobile Only - Above Title */}
             {connected && (
               <div className="mb-6 lg:hidden">
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-100 mb-4">
-                  <h3 className="text-sm font-medium text-gray-900 mb-3">
+                <div className="p-4 bg-lavender-light rounded-xl border border-lavender mb-4">
+                  <h3 className="text-sm font-medium text-navy mb-3">
                     Welcome back, {getUserDisplayName(user)}
                   </h3>
-                  <div className="space-y-2 text-xs text-gray-600">
+                  <div className="space-y-2 text-xs text-navy/60">
                     <div className="flex justify-between">
                       <span>Submissions</span>
                       <span>{userStats?.manuscriptsSubmitted || 0}</span>
@@ -357,10 +358,10 @@ export default function OverviewPage() {
 
             {/* Minimalist Header */}
             <div className="mb-4 sm:mb-6">
-              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-1">
+              <h1 className="text-xl sm:text-2xl font-semibold text-navy mb-1">
                 Latest Research
               </h1>
-              <p className="text-xs sm:text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-navy/40">
                 {filteredManuscripts.length} manuscripts available
               </p>
             </div>
@@ -370,7 +371,7 @@ export default function OverviewPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-3 items-start sm:items-center justify-between">
                 <div className="w-full sm:flex-1">
                   <div className="relative w-full sm:max-w-md">
-                    <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-navy/30 h-4 w-4" />
                     <Input
                       placeholder="Search..."
                       value={searchTerm}
@@ -401,7 +402,7 @@ export default function OverviewPage() {
                     </SelectContent>
                   </Select>
 
-                  <Button asChild size="sm" className="h-9 flex-shrink-0">
+                  <Button asChild size="sm" className="h-9 flex-shrink-0 bg-navy hover:bg-navy/90">
                     <Link href="/submit-manuscript">
                       <PlusIcon className="h-4 w-4 mr-1" />
                       Submit
@@ -469,25 +470,25 @@ export default function OverviewPage() {
                         onClick={() => openManuscript(manuscript)}
                         className="cursor-pointer group"
                       >
-                        <Card className="h-full border border-gray-100 hover:border-gray-200 transition-all duration-200 bg-white hover:shadow-sm">
+                        <Card className="h-full border border-navy/5 hover:border-navy/10 transition-all duration-200 bg-white hover:shadow-md">
                           <CardContent className="p-3 sm:p-4 space-y-3">
                             <div className="flex items-start justify-between">
                               <Badge
                                 variant="secondary"
-                                className="text-xs px-2 py-1 bg-gray-100 text-gray-700"
+                                className="text-xs px-2 py-1 bg-lavender text-navy border-0"
                               >
                                 {manuscript.category[0] || "Research"}
                               </Badge>
-                              <div className="flex items-center space-x-1 text-gray-400 group-hover:text-gray-600 transition-colors">
+                              <div className="flex items-center space-x-1 text-navy/20 group-hover:text-orange-accent transition-colors">
                                 <ExternalLinkIcon className="h-3 w-3" />
                               </div>
                             </div>
 
-                            <h3 className="font-medium text-sm sm:text-base text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                            <h3 className="font-medium text-sm sm:text-base text-navy group-hover:text-orange-accent transition-colors line-clamp-2 leading-snug">
                               {manuscript.title}
                             </h3>
 
-                            <div className="flex items-center space-x-2 text-sm text-gray-600">
+                            <div className="flex items-center space-x-2 text-sm text-navy/50">
                               <UserIcon className="h-3 w-3" />
                               <span className="line-clamp-1 text-xs">
                                 {manuscript.author}
@@ -495,13 +496,13 @@ export default function OverviewPage() {
                             </div>
 
                             {manuscript.abstract && (
-                              <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                              <p className="text-xs text-navy/40 line-clamp-2 leading-relaxed">
                                 {manuscript.abstract}
                               </p>
                             )}
 
                             <div className="flex items-center justify-between pt-1">
-                              <div className="flex items-center space-x-1 text-xs text-gray-400">
+                              <div className="flex items-center space-x-1 text-xs text-navy/30">
                                 <CalendarIcon className="h-3 w-3" />
                                 <span>
                                   {formatDate(manuscript.publishedDate)}
@@ -516,13 +517,13 @@ export default function OverviewPage() {
                                       <Badge
                                         key={index}
                                         variant="outline"
-                                        className="text-xs px-1.5 py-0.5 border-gray-200 text-gray-500"
+                                        className="text-xs px-1.5 py-0.5 border-navy/10 text-navy/50"
                                       >
                                         {cat}
                                       </Badge>
                                     ))}
                                   {manuscript.category.length > 2 && (
-                                    <span className="text-xs text-gray-400">
+                                    <span className="text-xs text-navy/30">
                                       +{manuscript.category.length - 2}
                                     </span>
                                   )}
@@ -539,10 +540,10 @@ export default function OverviewPage() {
                 {/* Empty State */}
                 {!manuscriptsLoading && filteredManuscripts.length === 0 && (
                   <div className="text-center py-8 sm:py-12">
-                    <h3 className="text-base font-medium text-gray-600 mb-2">
+                    <h3 className="text-base font-medium text-navy mb-2">
                       No manuscripts found
                     </h3>
-                    <p className="text-sm text-gray-400 mb-4 max-w-sm mx-auto">
+                    <p className="text-sm text-navy/40 mb-4 max-w-sm mx-auto">
                       {searchTerm || selectedCategory !== "All Categories"
                         ? "Try adjusting your search criteria"
                         : "No published research available yet"}
@@ -567,11 +568,11 @@ export default function OverviewPage() {
               {/* User Info */}
               {connected && (
                 <div className="space-y-4 lg:block hidden">
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                    <h3 className="text-sm font-medium text-gray-900 mb-3">
+                  <div className="p-4 bg-lavender-light rounded-xl border border-lavender">
+                    <h3 className="text-sm font-medium text-navy mb-3">
                       Welcome back, {getUserDisplayName(user)}
                     </h3>
-                    <div className="space-y-2 text-xs text-gray-600">
+                    <div className="space-y-2 text-xs text-navy/60">
                       <div className="flex justify-between">
                         <span>Submissions</span>
                         <span>{userStats?.manuscriptsSubmitted || 0}</span>

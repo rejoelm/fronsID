@@ -5,7 +5,23 @@ pub mod state;
 pub mod instructions;
 pub mod constants;
 
-use instructions::{register_user::*, submit_manuscript::*, review_manuscript::*, initialize_escrow::*, initialize_doci_registry::*, mint_doci_nft::*, register_privy_user::*, migrate_to_privy::*, verify_cv::*};
+use instructions::{
+    register_user::*,
+    submit_manuscript::*,
+    review_manuscript::*,
+    initialize_escrow::*,
+    initialize_doci_registry::*,
+    initialize_protocol::*,
+    initialize_author_vault::*,
+    mint_doci_nft::*,
+    record_citation::*,
+    distribute_pool::*,
+    claim_earnings::*,
+    advance_epoch::*,
+    register_privy_user::*,
+    migrate_to_privy::*,
+    verify_cv::*,
+};
 
 declare_id!("28VkA76EcTTN746SxZyYT8NTte9gofeBQ2L4N8hfYPgd");
 
@@ -42,12 +58,40 @@ pub mod fronsciers {
         instructions::initialize_doci_registry::handler(ctx)
     }
 
+    pub fn initialize_protocol(
+        ctx: Context<InitializeProtocol>,
+        treasury: Pubkey,
+        sharing_pool: Pubkey,
+        reserve: Pubkey,
+    ) -> Result<()> {
+        instructions::initialize_protocol::handler(ctx, treasury, sharing_pool, reserve)
+    }
+
+    pub fn initialize_author_vault(ctx: Context<InitializeAuthorVault>) -> Result<()> {
+        instructions::initialize_author_vault::handler(ctx)
+    }
+
     pub fn mint_doci_nft(
         ctx: Context<MintDOCINFT>,
         manuscript_title: String,
         manuscript_description: String,
     ) -> Result<()> {
         instructions::mint_doci_nft::handler(ctx, manuscript_title, manuscript_description)
+    }
+
+    pub fn record_citation(ctx: Context<RecordCitation>) -> Result<()> {
+        instructions::record_citation::handler(ctx)
+    }
+
+    pub fn distribute_pool(
+        ctx: Context<DistributePool>,
+        amount: u64,
+    ) -> Result<()> {
+        instructions::distribute_pool::handler(ctx, amount)
+    }
+
+    pub fn claim_earnings(ctx: Context<ClaimEarnings>) -> Result<()> {
+        instructions::claim_earnings::handler(ctx)
     }
 
     pub fn register_privy_user(

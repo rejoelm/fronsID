@@ -46,4 +46,20 @@ pub enum FronsciersError {
   CVVerificationRequired,
   #[msg("Academic email verification required")]
   AcademicEmailRequired,
+
+  // Revenue & Protocol errors
+  #[msg("Protocol is paused")]
+  ProtocolPaused,
+  #[msg("Unauthorized: caller is not protocol authority")]
+  Unauthorized,
+  #[msg("Invalid fee split: BPS must total 10000")]
+  InvalidFeeSplit,
+  #[msg("No claimable earnings available")]
+  NothingToClaim,
+  #[msg("Arithmetic overflow in fee calculation")]
+  ArithmeticOverflow,
+  #[msg("Reviewer does not meet qualification requirements")]
+  ReviewerNotQualified,
+  #[msg("Epoch cannot be advanced yet")]
+  EpochNotReady,
 }

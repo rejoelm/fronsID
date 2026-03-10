@@ -13,7 +13,7 @@ import { Footer } from "@/components/landing/Footer";
 
 export default function Home() {
   return (
-    <div className="bg-white">
+    <div className="bg-off-white dark:bg-navy-900">
       <Header />
       <Hero />
       <ProblemAgitation />

@@ -49,13 +49,13 @@ export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-20 sm:py-28 bg-off-white">
+    <section className="py-20 sm:py-28 bg-off-white dark:bg-navy-900">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">
           <span className="text-sm font-semibold text-orange-accent tracking-wider uppercase">
             FAQ
           </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-navy tracking-tight">
+          <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-navy dark:text-white tracking-tight">
             Frequently asked questions
           </h2>
         </div>
@@ -64,17 +64,17 @@ export function Faq() {
           {faqs.map((faq, i) => (
             <div
               key={i}
-              className="bg-white rounded-xl border border-navy/5 overflow-hidden transition-shadow hover:shadow-sm"
+              className="bg-white dark:bg-white/5 rounded-xl border border-navy/5 dark:border-white/10 overflow-hidden transition-shadow hover:shadow-sm"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
                 className="w-full flex items-center justify-between px-6 py-4 text-left"
               >
-                <span className="text-sm font-semibold text-navy pr-4">
+                <span className="text-sm font-semibold text-navy dark:text-white pr-4">
                   {faq.question}
                 </span>
                 <ChevronDown
-                  className={`w-4 h-4 text-navy/40 flex-shrink-0 transition-transform duration-200 ${
+                  className={`w-4 h-4 text-navy/40 dark:text-white/40 flex-shrink-0 transition-transform duration-200 ${
                     openIndex === i ? "rotate-180" : ""
                   }`}
                 />
@@ -84,7 +84,7 @@ export function Faq() {
                   openIndex === i ? "max-h-96" : "max-h-0"
                 }`}
               >
-                <p className="px-6 pb-5 text-sm text-navy/50 leading-relaxed">
+                <p className="px-6 pb-5 text-sm text-navy/50 dark:text-white/50 leading-relaxed">
                   {faq.answer}
                 </p>
               </div>

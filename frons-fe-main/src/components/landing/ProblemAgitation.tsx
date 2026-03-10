@@ -70,7 +70,7 @@ export function ProblemAgitation() {
       stat: "Paywalled",
       title: "Access Barriers",
       description:
-        "Researchers in developing nations can't access the papers they need. Knowledge should be open, not locked behind $35 per article.",
+        "Researchers in developing nations can&apos;t access the papers they need. Knowledge should be open, not locked behind $35 per article.",
       color: "text-navy",
       bg: "bg-lavender-light",
       border: "border-lavender",
@@ -78,18 +78,18 @@ export function ProblemAgitation() {
   ];
 
   return (
-    <section ref={sectionRef} className="py-20 sm:py-28 bg-white">
+    <section ref={sectionRef} className="py-20 sm:py-28 bg-white dark:bg-navy-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">
           <span className="text-sm font-semibold text-orange-accent tracking-wider uppercase">
             The Problem
           </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-navy tracking-tight">
+          <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-navy dark:text-white tracking-tight">
             Academic publishing is broken
           </h2>
-          <p className="mt-3 text-base text-navy/50 max-w-xl mx-auto">
+          <p className="mt-3 text-base text-navy/50 dark:text-white/50 max-w-xl mx-auto">
             Researchers deserve better. The current system is slow, expensive,
-            and doesn't reward the people who create the knowledge.
+            and doesn&apos;t reward the people who create the knowledge.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ export function ProblemAgitation() {
           {problems.map((problem) => (
             <div
               key={problem.title}
-              className={`problem-card group p-6 rounded-2xl border ${problem.border} ${problem.bg} hover:shadow-lg transition-all duration-300`}
+              className={`problem-card group p-6 rounded-2xl border ${problem.border} ${problem.bg} dark:bg-white/5 dark:border-white/10 hover:shadow-lg transition-all duration-300`}
             >
               <div className="flex items-start gap-4">
                 <div
@@ -109,10 +109,10 @@ export function ProblemAgitation() {
                   <div className={`text-2xl font-bold ${problem.color}`}>
                     {problem.stat}
                   </div>
-                  <h3 className="text-lg font-semibold text-navy mt-1">
+                  <h3 className="text-lg font-semibold text-navy dark:text-white mt-1">
                     {problem.title}
                   </h3>
-                  <p className="text-sm text-navy/50 mt-2 leading-relaxed">
+                  <p className="text-sm text-navy/50 dark:text-white/50 mt-2 leading-relaxed">
                     {problem.description}
                   </p>
                 </div>
