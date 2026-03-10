@@ -1,0 +1,8 @@
+<svg width="1250" height="974" viewBox="0 0 1250 974" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <clipPath id="cardShape">
+    <path d="M0 100C0 44.7715 44.7715 0 100 0H1250V974H100C44.7715 974 0 929.228 0 874V100Z"/>
+  </clipPath>
+</defs>
+<path d="M0 100C0 44.7715 44.7715 0 100 0H1250V974H100C44.7715 974 0 929.228 0 874V100Z" fill="#D9D9D9"/>
+</svg>

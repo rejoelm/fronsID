@@ -1,0 +1,25 @@
+[toolchain]
+package_manager = "yarn"
+
+[features]
+seeds = false
+skip-lint = false
+
+[programs.devnet]
+fronsciers = "28VkA76EcTTN746SxZyYT8NTte9gofeBQ2L4N8hfYPgd"
+
+[programs.localnet]
+fronsciers = "28VkA76EcTTN746SxZyYT8NTte9gofeBQ2L4N8hfYPgd"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+url = "http://127.0.0.1:8899"
+wallet = "/Users/mac/.config/solana/new-wallet.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 'tests/**/*.ts'"
+
+

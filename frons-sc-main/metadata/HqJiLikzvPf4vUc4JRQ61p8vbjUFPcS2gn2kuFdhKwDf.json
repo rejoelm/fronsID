@@ -1,0 +1,44 @@
+{
+  "name": "DOCI: Test Manuscript Title",
+  "symbol": "DOCI",
+  "description": "A comprehensive test manuscript for peer review",
+  "image": "https://fronsciers.com/api/manuscript/10.fronsciers/manuscript.2024.0001/thumbnail.png",
+  "external_url": "https://fronsciers.com/manuscript/10.fronsciers/manuscript.2024.0001",
+  "animation_url": "",
+  "uri": "https://fronsciers.com/api/manuscript/10.fronsciers/manuscript.2024.0001/metadata.json",
+  "properties": {
+    "files": [
+      {
+        "uri": "https://ipfs.io/ipfs/QmTestHashForManuscript123",
+        "type": "application/pdf"
+      }
+    ],
+    "category": "document"
+  },
+  "attributes": [
+    {
+      "trait_type": "DOCI",
+      "value": "10.fronsciers/manuscript.2024.0001"
+    },
+    {
+      "trait_type": "Author",
+      "value": "12PTxir3ZMVdVnXpXvkkLVnZdDUF54ZY5rgyhKNRThnW"
+    },
+    {
+      "trait_type": "Publication Date",
+      "value": "2025-06-30"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Academic Manuscript"
+    },
+    {
+      "trait_type": "Platform",
+      "value": "Fronsciers"
+    }
+  ],
+  "collection": {
+    "name": "Fronsciers Published Manuscripts",
+    "family": "DOCI"
+  }
+}

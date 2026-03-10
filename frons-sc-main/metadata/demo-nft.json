@@ -1,0 +1,60 @@
+{
+  "name": "DOCI: Revolutionary Blockchain Research",
+  "symbol": "DOCI",
+  "description": "A comprehensive study on decentralized academic publishing using blockchain technology for peer review and citation tracking.",
+  "image": "https://fronsciers.com/api/manuscript/10.fronsciers/manuscript.2024.0001/thumbnail.png",
+  "external_url": "https://fronsciers.com/manuscript/10.fronsciers/manuscript.2024.0001",
+  "animation_url": "",
+  "uri": "https://fronsciers.com/api/manuscript/10.fronsciers/manuscript.2024.0001/metadata.json",
+  "properties": {
+    "files": [
+      {
+        "uri": "https://ipfs.io/ipfs/QmExampleHash123",
+        "type": "application/pdf"
+      }
+    ],
+    "category": "document"
+  },
+  "attributes": [
+    {
+      "trait_type": "DOCI",
+      "value": "10.fronsciers/manuscript.2024.0001"
+    },
+    {
+      "trait_type": "Author",
+      "value": "Dr. Alice Johnson"
+    },
+    {
+      "trait_type": "Publication Date",
+      "value": "2024-01-15"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Computer Science"
+    },
+    {
+      "trait_type": "Platform",
+      "value": "Fronsciers"
+    },
+    {
+      "trait_type": "Reviewers Count",
+      "value": 3
+    },
+    {
+      "trait_type": "Authors Royalty Share",
+      "value": "50%"
+    },
+    {
+      "trait_type": "Platform Share",
+      "value": "20%"
+    },
+    {
+      "trait_type": "Reviewers Share",
+      "value": "30%"
+    }
+  ],
+  "collection": {
+    "name": "Fronsciers Published Manuscripts",
+    "family": "DOCI"
+  }
+}

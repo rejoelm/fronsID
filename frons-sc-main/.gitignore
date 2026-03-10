@@ -1,0 +1,52 @@
+# Rust-related
+target/
+**/*.rs.bk
+
+# Node.js-related
+node_modules/
+.yarn/
+
+# Test ledger (specific to Solana or other blockchain tools)
+test-ledger/
+
+# macOS system files
+.DS_Store
+
+# Cache
+.cache/
+
+# Environment files
+.env
+.env.*
+app/client/.env
+app/client/.env.*
+app/server/.env
+app/server/.env.*
+fronsciers/.env
+fronsciers/.env.*
+
+# IDE and Editor settings
+.idea/
+.vscode/
+*.swp
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage
+coverage/
+
+# Build artifacts
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Ignore system files
+Thumbs.db

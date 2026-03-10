@@ -1,0 +1,952 @@
+{
+  "address": "28VkA76EcTTN746SxZyYT8NTte9gofeBQ2L4N8hfYPgd",
+  "metadata": {
+    "name": "fronsciers",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "initialize_doci_registry",
+      "discriminator": [
+        244,
+        124,
+        138,
+        46,
+        164,
+        51,
+        156,
+        88
+      ],
+      "accounts": [
+        {
+          "name": "doci_registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  111,
+                  99,
+                  105,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_escrow",
+      "discriminator": [
+        243,
+        160,
+        77,
+        153,
+        11,
+        92,
+        48,
+        209
+      ],
+      "accounts": [
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "mint_doci_nft",
+      "discriminator": [
+        182,
+        241,
+        79,
+        8,
+        123,
+        77,
+        146,
+        130
+      ],
+      "accounts": [
+        {
+          "name": "manuscript",
+          "writable": true
+        },
+        {
+          "name": "doci_registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  111,
+                  99,
+                  105,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "doci_manuscript",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  111,
+                  99,
+                  105,
+                  95,
+                  109,
+                  97,
+                  110,
+                  117,
+                  115,
+                  99,
+                  114,
+                  105,
+                  112,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "manuscript"
+              }
+            ]
+          }
+        },
+        {
+          "name": "doci_mint",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "author",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "author_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "author"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "doci_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "manuscript_title",
+          "type": "string"
+        },
+        {
+          "name": "manuscript_description",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "register_user",
+      "discriminator": [
+        2,
+        241,
+        150,
+        223,
+        99,
+        214,
+        116,
+        97
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "wallet"
+              }
+            ]
+          }
+        },
+        {
+          "name": "wallet",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "education",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "review_manuscript",
+      "discriminator": [
+        34,
+        232,
+        222,
+        65,
+        219,
+        116,
+        224,
+        13
+      ],
+      "accounts": [
+        {
+          "name": "manuscript",
+          "writable": true
+        },
+        {
+          "name": "reviewer",
+          "signer": true
+        },
+        {
+          "name": "author",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "manuscript.author",
+                "account": "Manuscript"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_usd_account",
+          "writable": true
+        },
+        {
+          "name": "author_usd_account",
+          "writable": true
+        },
+        {
+          "name": "platform_usd_account",
+          "writable": true
+        },
+        {
+          "name": "frons_mint",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_token_account",
+          "writable": true
+        },
+        {
+          "name": "reviewer_escrow_token_account",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "decision",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "submit_manuscript",
+      "discriminator": [
+        148,
+        104,
+        148,
+        175,
+        255,
+        99,
+        109,
+        216
+      ],
+      "accounts": [
+        {
+          "name": "manuscript",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "author"
+              }
+            ]
+          }
+        },
+        {
+          "name": "author",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "author_usd_account",
+          "writable": true
+        },
+        {
+          "name": "escrow_usd_account",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "ipfs_hash",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "DOCIManuscript",
+      "discriminator": [
+        17,
+        181,
+        64,
+        6,
+        34,
+        234,
+        150,
+        222
+      ]
+    },
+    {
+      "name": "DOCIRegistry",
+      "discriminator": [
+        223,
+        118,
+        182,
+        156,
+        182,
+        162,
+        8,
+        196
+      ]
+    },
+    {
+      "name": "EscrowAccount",
+      "discriminator": [
+        36,
+        69,
+        48,
+        18,
+        128,
+        225,
+        125,
+        135
+      ]
+    },
+    {
+      "name": "Manuscript",
+      "discriminator": [
+        194,
+        56,
+        127,
+        4,
+        164,
+        30,
+        156,
+        245
+      ]
+    },
+    {
+      "name": "User",
+      "discriminator": [
+        159,
+        117,
+        95,
+        227,
+        239,
+        151,
+        58,
+        236
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "DOCINFTMinted",
+      "discriminator": [
+        159,
+        148,
+        177,
+        73,
+        242,
+        63,
+        23,
+        58
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "SubmissionRequirementsNotMet",
+      "msg": "User does not meet submission requirements"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidEducationLevel",
+      "msg": "Invalid education level"
+    },
+    {
+      "code": 6002,
+      "name": "InsufficientPublishedPapers",
+      "msg": "Insufficient published papers"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidDecision",
+      "msg": "Invalid decision. Must be 'Accepted' or 'Rejected'"
+    },
+    {
+      "code": 6004,
+      "name": "MissingCvHash",
+      "msg": "CV hash is required"
+    },
+    {
+      "code": 6005,
+      "name": "MissingIpfsHash",
+      "msg": "IPFS hash is required"
+    },
+    {
+      "code": 6006,
+      "name": "ReviewerAlreadyAdded",
+      "msg": "Manuscript already reviewed by this reviewer"
+    },
+    {
+      "code": 6007,
+      "name": "DecisionAlreadyAdded",
+      "msg": "Manuscript already has this decision"
+    },
+    {
+      "code": 6008,
+      "name": "NotEnoughReviews",
+      "msg": "Not enough reviews to make a decision"
+    },
+    {
+      "code": 6009,
+      "name": "ManuscriptNotPending",
+      "msg": "Manuscript is not pending"
+    },
+    {
+      "code": 6010,
+      "name": "ManuscriptNotAccepted",
+      "msg": "Manuscript is not accepted"
+    }
+  ],
+  "types": [
+    {
+      "name": "DOCIManuscript",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "doci",
+            "type": "string"
+          },
+          {
+            "name": "manuscript_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint_address",
+            "type": "pubkey"
+          },
+          {
+            "name": "manuscript_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "authors",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "peer_reviewers",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "publication_date",
+            "type": "i64"
+          },
+          {
+            "name": "version",
+            "type": "u8"
+          },
+          {
+            "name": "citation_count",
+            "type": "u32"
+          },
+          {
+            "name": "access_count",
+            "type": "u32"
+          },
+          {
+            "name": "metadata_uri",
+            "type": "string"
+          },
+          {
+            "name": "royalty_config",
+            "type": {
+              "defined": {
+                "name": "RoyaltyConfig"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DOCINFTMinted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "doci",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "ipfs_hash",
+            "type": "string"
+          },
+          {
+            "name": "author",
+            "type": "pubkey"
+          },
+          {
+            "name": "reviewers",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "publication_date",
+            "type": "i64"
+          },
+          {
+            "name": "authors_share",
+            "type": "u16"
+          },
+          {
+            "name": "platform_share",
+            "type": "u16"
+          },
+          {
+            "name": "reviewers_share",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DOCIRegistry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "total_published",
+            "type": "u64"
+          },
+          {
+            "name": "current_year",
+            "type": "u16"
+          },
+          {
+            "name": "next_sequence",
+            "type": "u64"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EscrowAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Manuscript",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "author",
+            "type": "pubkey"
+          },
+          {
+            "name": "ipfs_hash",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          },
+          {
+            "name": "reviewers",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "decisions",
+            "type": {
+              "vec": "string"
+            }
+          },
+          {
+            "name": "submission_time",
+            "type": "i64"
+          },
+          {
+            "name": "doci",
+            "type": {
+              "option": "string"
+            }
+          },
+          {
+            "name": "doci_mint",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "publication_date",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RoyaltyConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authors_share",
+            "type": "u16"
+          },
+          {
+            "name": "platform_share",
+            "type": "u16"
+          },
+          {
+            "name": "reviewers_share",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "User",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "education",
+            "type": "string"
+          },
+          {
+            "name": "published_papers",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}
