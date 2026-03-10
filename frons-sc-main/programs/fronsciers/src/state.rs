@@ -44,13 +44,19 @@ pub enum ManuscriptStatus {
     Published,
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
+pub enum ReviewDecision {
+    Accepted,
+    Rejected,
+}
+
 #[account]
 pub struct Manuscript {
   pub author: Pubkey,
   pub ipfs_hash: String,
   pub status: ManuscriptStatus,
   pub reviewers: Vec<Pubkey>,
-  pub decisions: Vec<String>,
+  pub decisions: Vec<ReviewDecision>,
   pub submission_time: i64,
   pub doci: Option<String>,
   pub doci_mint: Option<Pubkey>,
@@ -140,6 +146,7 @@ impl User {
     let valid_education = matches!(self.education.as_str(), "PhD" | "Master" | "Bachelor" | "Doctorate");
     let sufficient_papers = self.published_papers >= 3;
     let cv_verified = self.cv_verified;
+    
     valid_education && sufficient_papers && cv_verified
   }
 
@@ -203,11 +210,11 @@ impl Manuscript {
   }
 
   pub fn get_acceptance_count(&self) -> usize {
-    self.decisions.iter().filter(|&decision| decision == "Accepted").count()
+    self.decisions.iter().filter(|&decision| *decision == ReviewDecision::Accepted).count()
   }
 
   pub fn get_rejection_count(&self) -> usize {
-    self.decisions.iter().filter(|&decision| decision == "Rejected").count()
+    self.decisions.iter().filter(|&decision| *decision == ReviewDecision::Rejected).count()
   }
 }
 

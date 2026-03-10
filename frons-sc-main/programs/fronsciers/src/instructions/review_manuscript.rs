@@ -4,16 +4,17 @@ use anchor_spl::token::{self, Mint, MintTo, Token, TokenAccount, Transfer};
 
 pub fn handler(
   ctx: Context<ReviewManuscript>,
-  decision: String,
+  decision: ReviewDecision,
 ) -> Result<()> {
-  require!(decision.as_str() == "Accepted" || decision.as_str() == "Rejected", FronsciersError::InvalidDecision);
-
   let manuscript = &mut ctx.accounts.manuscript;
-  let protocol = &ctx.accounts.protocol_state;
+  let protocol = &mut ctx.accounts.protocol_state; // Elevated to mutable for revenue tracking
   
   require!(protocol.is_active(), FronsciersError::ProtocolPaused);
   require!(manuscript.is_pending(), FronsciersError::ManuscriptNotPending);
   require!(!manuscript.has_reviewer(&ctx.accounts.reviewer.key()), FronsciersError::ReviewerAlreadyAdded);
+  
+  // Strict self-review validation
+  require!(ctx.accounts.reviewer.key() != manuscript.author, FronsciersError::CannotReviewOwnManuscript);
 
   // Validate reviewer qualifications
   require!(ctx.accounts.reviewer_user.can_be_reviewer(), FronsciersError::ReviewerNotQualified);
@@ -90,7 +91,8 @@ pub fn handler(
     let cpi_context = CpiContext::new_with_signer(cpi_program.clone(), cpi_accounts, signer_seeds);
     token::mint_to(cpi_context, total_reviewer_rewards)?;
 
-    // Protocol stats tracking via events (ProtocolState is read-only here)
+    // Track protocol revenue
+    protocol.total_revenue_usdc += SUBMISSION_FEE;
     
     msg!("Manuscript accepted — fee split: platform={}, pool={}, author={}, reserve={}",
       platform_amount, pool_amount, author_amount, reserve_amount);
@@ -121,15 +123,18 @@ pub fn handler(
     let cpi_context = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
     token::transfer(cpi_context, REJECTION_KEEP)?;
 
+    // Track protocol partial revenue ($5 kept)
+    protocol.total_revenue_usdc += REJECTION_KEEP;
+
     msg!("Manuscript rejected — $45 refunded, $5 kept in treasury");
   }
   
-  msg!("Review recorded: {} - {}", manuscript.ipfs_hash, decision);
+  msg!("Review recorded: {} - {:?}", manuscript.ipfs_hash, decision);
   Ok(())
 }
 
 #[derive(Accounts)]
-#[instruction(decision: String)]
+#[instruction(decision: ReviewDecision)]
 pub struct ReviewManuscript<'info> {
   #[account(mut)]
   pub manuscript: Box<Account<'info, Manuscript>>,

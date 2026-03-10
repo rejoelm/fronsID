@@ -21,6 +21,7 @@ use instructions::{
     register_privy_user::*,
     migrate_to_privy::*,
     verify_cv::*,
+    mock_verify_reviewer::*,
 };
 
 declare_id!("28VkA76EcTTN746SxZyYT8NTte9gofeBQ2L4N8hfYPgd");
@@ -45,7 +46,7 @@ pub mod fronsciers {
 
     pub fn review_manuscript(
         ctx: Context<ReviewManuscript>, 
-        decision: String
+        decision: state::ReviewDecision
     ) -> Result<()> {
         instructions::review_manuscript::handler(ctx, decision)
     }
@@ -123,5 +124,12 @@ pub mod fronsciers {
         backend_signature: String,
     ) -> Result<()> {
         instructions::verify_cv::handler(ctx, cv_hash, published_papers, backend_signature)
+    }
+
+    pub fn mock_verify_reviewer(
+        ctx: Context<MockVerifyReviewer>,
+        academic_email: String,
+    ) -> Result<()> {
+        instructions::mock_verify_reviewer::handler(ctx, academic_email)
     }
 }

@@ -13,3 +13,4 @@ pub mod advance_epoch;
 pub mod register_privy_user;
 pub mod migrate_to_privy;
 pub mod verify_cv;
+pub mod mock_verify_reviewer;

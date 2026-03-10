@@ -1,0 +1,7 @@
+.DS_Store
+frons-sc-main/test_out.txt
+test_out.txt
+node_modules/
+target/
+.anchor/
+.gemini/

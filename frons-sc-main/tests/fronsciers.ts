@@ -259,6 +259,26 @@ describe("Fronsciers — Grand Design Revenue Sharing Tests", () => {
     assert.equal(user.wallet.toString(), author.publicKey.toString());
 
     console.log("  ✅ User registered (PhD, wallet: " + author.publicKey.toString().slice(0, 12) + "...)");
+
+    // Initialize Reviewers
+    const reviewers = [reviewer1, reviewer2, reviewer3];
+    for (let i = 0; i < 3; i++) {
+      const [rUserPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("user"), reviewers[i].publicKey.toBuffer()],
+        program.programId
+      );
+      
+      await program.methods
+        .registerUser("PhD")
+        .accountsPartial({
+          user: rUserPda,
+          wallet: reviewers[i].publicKey,
+          systemProgram: SystemProgram.programId,
+        })
+        .signers([reviewers[i]])
+        .rpc();
+    }
+    console.log("  ✅ 3 Reviewer Users registered");
   });
 
   // ═══════════════════════════════════════════════════
@@ -286,6 +306,43 @@ describe("Fronsciers — Grand Design Revenue Sharing Tests", () => {
     assert.equal(user.publishedPapers, 5);
 
     console.log("  ✅ CV verified (5 papers, cv_verified=true)");
+
+    const reviewers = [reviewer1, reviewer2, reviewer3];
+    for (let i = 0; i < 3; i++) {
+      const [rUserPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("user"), reviewers[i].publicKey.toBuffer()],
+        program.programId
+      );
+      
+      await program.methods
+        .verifyCv("bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi", 5, "backend_sig")
+        .accountsPartial({
+          user: rUserPda,
+          userWallet: reviewers[i].publicKey,
+          backendAuthority: admin,
+          systemProgram: SystemProgram.programId,
+        })
+        .rpc();
+
+      await program.methods
+        .mockVerifyReviewer(`reviewer${i}@university.edu`)
+        .accountsPartial({
+          user: rUserPda,
+          wallet: reviewers[i].publicKey,
+        })
+        .signers([reviewers[i]])
+        .rpc();
+    }
+
+    const r3Pda = PublicKey.findProgramAddressSync(
+      [Buffer.from("user"), reviewers[2].publicKey.toBuffer()],
+      program.programId
+    )[0];
+    const r3User = await program.account.user.fetch(r3Pda);
+    console.log(`Reviewer 3 CV verified state: ${r3User.cvVerified}, email: ${r3User.academicEmail}`);
+    assert.isTrue(r3User.cvVerified, "Reviewer 3 CV MUST be verified");
+
+    console.log("  ✅ 3 Reviewers CVs and Academic Emails mocked successfully");
   });
 
   // ═══════════════════════════════════════════════════
@@ -314,7 +371,7 @@ describe("Fronsciers — Grand Design Revenue Sharing Tests", () => {
 
     const manuscript = await program.account.manuscript.fetch(manuscriptAccount.publicKey);
     assert.equal(manuscript.ipfsHash, "QmTestHashGrandDesign123");
-    assert.equal(manuscript.status, "Pending");
+    assert.isOk(manuscript.status.pending, "Status should be Pending");
 
     const authorBalanceAfter = await getAccount(provider.connection, authorUsdcAccount);
     const authorAfter = Number(authorBalanceAfter.amount);
@@ -343,11 +400,17 @@ describe("Fronsciers — Grand Design Revenue Sharing Tests", () => {
     for (let i = 0; i < 3; i++) {
       console.log(`     📋 Review ${i + 1}/3 from ${reviewers[i].publicKey.toString().slice(0, 8)}...`);
 
+      const [rUserPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("user"), reviewers[i].publicKey.toBuffer()],
+        program.programId
+      );
+
       await program.methods
-        .reviewManuscript("Accepted")
+        .reviewManuscript({ accepted: {} })
         .accountsPartial({
           manuscript: manuscriptAccount.publicKey,
           reviewer: reviewers[i].publicKey,
+          reviewerUser: rUserPda,
           author: userPda,
           protocolState: protocolPda,
           escrowUsdAccount: escrowUsdcAccount,
@@ -367,7 +430,7 @@ describe("Fronsciers — Grand Design Revenue Sharing Tests", () => {
 
     // ── Verify manuscript accepted ──
     const manuscript = await program.account.manuscript.fetch(manuscriptAccount.publicKey);
-    assert.equal(manuscript.status, "Accepted");
+    assert.isOk(manuscript.status.accepted, "Status should be Accepted");
     assert.equal(manuscript.reviewers.length, 3);
 
     // ── Verify 4-way split ──
@@ -465,7 +528,7 @@ describe("Fronsciers — Grand Design Revenue Sharing Tests", () => {
     assert.equal(dociManuscript.royaltyConfig.platformShare, 4000, "Platform share should be 40%");
     assert.equal(dociManuscript.royaltyConfig.poolShare, 3000, "Pool share should be 30%");
     assert.equal(dociManuscript.royaltyConfig.reserveShare, 2000, "Reserve share should be 20%");
-    assert.equal(manuscript.status, "Published");
+    assert.isOk(manuscript.status.published, "Status should be Published");
 
     // Verify NFT
     const nftAccount = await getAccount(provider.connection, authorNftTokenAccount);
@@ -474,7 +537,7 @@ describe("Fronsciers — Grand Design Revenue Sharing Tests", () => {
     console.log("  ✅ DOCI NFT minted");
     console.log(`     DOCI: ${dociManuscript.doci}`);
     console.log(`     Royalty: author=10%, platform=40%, pool=30%, reserve=20%`);
-    console.log(`     Status: ${manuscript.status}`);
+    console.log(`     Status: Published`);
   });
 
   // ═══════════════════════════════════════════════════
@@ -506,11 +569,17 @@ describe("Fronsciers — Grand Design Revenue Sharing Tests", () => {
     // 3 rejection reviews
     const reviewers = [reviewer1, reviewer2, reviewer3];
     for (let i = 0; i < 3; i++) {
+      const [rUserPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("user"), reviewers[i].publicKey.toBuffer()],
+        program.programId
+      );
+
       await program.methods
-        .reviewManuscript("Rejected")
+        .reviewManuscript({ rejected: {} })
         .accountsPartial({
           manuscript: rejectedManuscript.publicKey,
           reviewer: reviewers[i].publicKey,
+          reviewerUser: rUserPda,
           author: userPda,
           protocolState: protocolPda,
           escrowUsdAccount: escrowUsdcAccount,
@@ -529,7 +598,7 @@ describe("Fronsciers — Grand Design Revenue Sharing Tests", () => {
     }
 
     const manuscript = await program.account.manuscript.fetch(rejectedManuscript.publicKey);
-    assert.equal(manuscript.status, "Rejected");
+    assert.isOk(manuscript.status.rejected, "Status should be Rejected");
 
     const authorAfter = Number((await getAccount(provider.connection, authorUsdcAccount)).amount);
     const treasuryAfter = Number((await getAccount(provider.connection, treasuryUsdcAccount)).amount);

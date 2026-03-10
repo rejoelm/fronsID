@@ -7,7 +7,7 @@ use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 pub fn handler(
     ctx: Context<RecordCitation>,
 ) -> Result<()> {
-    let protocol = &ctx.accounts.protocol_state;
+    let protocol = &mut ctx.accounts.protocol_state;
     require!(protocol.is_active(), FronsciersError::ProtocolPaused);
 
     // Access control: only protocol authority can record citations
@@ -70,6 +70,10 @@ pub fn handler(
     author_vault.claimable += author_amount;
     author_vault.total_citations += 1;
 
+    // Track protocol stats
+    protocol.total_citations += 1;
+    protocol.total_revenue_usdc += fee;
+
     msg!("Citation recorded for DOCI {} — fee split: platform={}, author={}, pool={}, reserve={}",
         doci_manuscript.doci, platform_amount, author_amount, pool_amount, reserve_amount);
     Ok(())
@@ -91,6 +95,7 @@ pub struct RecordCitation<'info> {
 
     /// Protocol state (fee config + wallet addresses)
     #[account(
+        mut,
         seeds = [PROTOCOL_SEED],
         bump = protocol_state.bump
     )]

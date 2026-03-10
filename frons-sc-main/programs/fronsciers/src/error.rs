@@ -62,4 +62,6 @@ pub enum FronsciersError {
   ReviewerNotQualified,
   #[msg("Epoch cannot be advanced yet")]
   EpochNotReady,
+  #[msg("Authors cannot review their own manuscript")]
+  CannotReviewOwnManuscript,
 }

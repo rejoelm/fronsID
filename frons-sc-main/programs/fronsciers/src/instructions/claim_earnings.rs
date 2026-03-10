@@ -15,6 +15,12 @@ pub fn handler(
         ctx.accounts.author.key() == author_vault.author,
         FronsciersError::Unauthorized
     );
+    
+    // Ensure the author hasn't already claimed in the current epoch
+    require!(
+        author_vault.last_claim_epoch < protocol.current_epoch,
+        FronsciersError::EpochNotReady
+    );
 
     let claim_amount = author_vault.claimable;
 
