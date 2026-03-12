@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Send, Key, Database, Sparkles, Loader2, Lock, FileUp, ShieldCheck, Download, Search, X, Paperclip, Shield, Library, BookOpen, Coins, LogOut } from "lucide-react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { useWalletBalances } from "@/hooks/useWalletBalances";
+import { supabase } from "@/lib/supabase";
+import { uploadToWalrus } from "@/utils/walrus";
 
 interface Message {
   role: "user" | "ai";
@@ -19,6 +21,7 @@ export default function EvidenceCascadeChat() {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [chatId, setChatId] = useState<string | null>(null);
   
   // Privy Auth & Wallet State
   const { ready, authenticated, user, login, logout } = usePrivy();
@@ -34,21 +37,69 @@ export default function EvidenceCascadeChat() {
   const [secretKey, setSecretKey] = useState("");
   const [isKeyValid, setIsKeyValid] = useState(false);
   
-  const [blobs, setBlobs] = useState<{ id: string; name: string }[]>([
-    { id: "walrus-blob-1", name: "Q3_Cell_Assay_Results.csv" },
-    { id: "walrus-blob-2", name: "Draft_Methods_Section.docx" }
-  ]);
+  const [blobs, setBlobs] = useState<{ id: string; name: string }[]>([]);
   const [selectedBlobs, setSelectedBlobs] = useState<string[]>([]);
   
   const [evidenceName, setEvidenceName] = useState("");
   const [evidenceContent, setEvidenceContent] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
+  // Load Chat History on Auth Content
+  useEffect(() => {
+    if (!activeWallet) return;
+
+    const loadChatHistory = async () => {
+      // Upsert User Profile
+      await supabase.from('users').upsert({ wallet_address: activeWallet, role: 'Author' }, { onConflict: 'wallet_address' });
+
+      // Fetch Latest Chat
+      const { data } = await supabase
+        .from('chat_history')
+        .select('*')
+        .eq('wallet_address', activeWallet)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .single();
+        
+      if (data && data.messages.length > 0) {
+        setChatId(data.id);
+        setMessages(data.messages);
+      } else {
+        // Create new session
+        const { data: newChat } = await supabase
+          .from('chat_history')
+          .insert({ wallet_address: activeWallet, title: 'Evidence Cascade Session', messages: messages })
+          .select()
+          .single();
+        if (newChat) setChatId(newChat.id);
+      }
+
+      // Fetch User's Walrus Blobs
+      const { data: userBlobs } = await supabase
+        .from('walrus_blobs')
+        .select('*')
+        .eq('wallet_address', activeWallet)
+        .order('created_at', { ascending: false });
+        
+      if (userBlobs) {
+        setBlobs(userBlobs.map(b => ({ id: b.blob_id, name: b.file_name })));
+      }
+    };
+    
+    loadChatHistory();
+  }, [activeWallet]);
+
   const handleSend = () => {
     if (!input.trim()) return;
 
     const userMessage = input.trim();
-    setMessages(prev => [...prev, { role: "user", content: userMessage }]);
+    setMessages(prev => {
+      const newMessages: Message[] = [...prev, { role: "user" as const, content: userMessage }];
+      if (chatId) {
+        supabase.from('chat_history').update({ messages: newMessages }).eq('id', chatId).then();
+      }
+      return newMessages;
+    });
     setInput("");
     setIsTyping(true);
 
@@ -85,7 +136,13 @@ export default function EvidenceCascadeChat() {
          aiResponse = `According to the latest FRONS-J journals and the Fronsciers Library, the leading research points toward significant breakthroughs in this field. I've aggregated the top 3 contextual findings for you.\n\n*Reminder: You will be charged a standard citation protocol fee for these authenticated references.*\n\n[Citation Fee Applied: 0.1 USDC]`;
       }
 
-      setMessages(prev => [...prev, { role: "ai", content: aiResponse }]);
+      setMessages(prev => {
+        const newMessages: Message[] = [...prev, { role: "ai" as const, content: aiResponse }];
+        if (chatId) {
+          supabase.from('chat_history').update({ messages: newMessages }).eq('id', chatId).then();
+        }
+        return newMessages;
+      });
       setIsTyping(false);
     }, 1500);
   };
@@ -97,16 +154,32 @@ export default function EvidenceCascadeChat() {
   };
 
   const handleEncryptAndUpload = async () => {
-    if (!evidenceName || !evidenceContent || !isKeyValid) return;
+    if (!evidenceName || !evidenceContent || !isKeyValid || !activeWallet) return;
     setIsUploading(true);
     
-    setTimeout(() => {
-      const newBlob = { id: `walrus-blob-${Date.now()}`, name: evidenceName };
-      setBlobs(prev => [newBlob, ...prev]);
-      setEvidenceName("");
-      setEvidenceContent("");
+    try {
+      // 1. Upload directly to Walrus decentralized network
+      const blobId = await uploadToWalrus(evidenceContent);
+      
+      // 2. Save metadata reference natively to Supabase DB
+      const { data: newRecord } = await supabase.from('walrus_blobs').insert({
+        wallet_address: activeWallet,
+        blob_id: blobId,
+        file_name: evidenceName,
+        is_encrypted: true
+      }).select().single();
+
+      if (newRecord) {
+        setBlobs(prev => [{ id: newRecord.blob_id, name: newRecord.file_name }, ...prev]);
+        setEvidenceName("");
+        setEvidenceContent("");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Encryption & Upload to Walrus network failed.");
+    } finally {
       setIsUploading(false);
-    }, 1500);
+    }
   };
 
   const toggleBlobSelection = (id: string) => {

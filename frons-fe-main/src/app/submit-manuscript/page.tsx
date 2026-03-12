@@ -32,6 +32,7 @@ import { useSubmissionForm } from "@/hooks/useSubmissionForm";
 import { useCVVerification } from "@/hooks/useCVVerification";
 import { usePayment } from "@/hooks/usePayment";
 import HeaderImage from "@/components/header-image";
+import { uploadToWalrus } from "@/utils/walrus";
 
 export default function SubmitManuscriptPage() {
   const { toast } = useToast();
@@ -209,9 +210,17 @@ export default function SubmitManuscriptPage() {
         walletAddress: validSolanaPublicKey,
       };
 
+      // 1. Direct Web3 Upload to Walrus
+      toast({
+        title: "Uploading to Walrus",
+        description: "Anchoring your manuscript PDF to the decentralized storage network...",
+      });
+      const walrusBlobId = await uploadToWalrus(selectedFile!);
+
+      // 2. Pass metadata to backend (including the Walrus Blob ID)
       const result = await submitManuscript(
         selectedFile!,
-        submissionMetadata,
+        { ...submissionMetadata, walrusBlobId } as any,
         apiUrl
       );
 
@@ -228,8 +237,8 @@ export default function SubmitManuscriptPage() {
       setSuccess(successMsg);
 
       setIpfsData({
-        cid: result.manuscript.cid,
-        ipfsUrl: result.ipfsUrls.manuscript,
+        cid: walrusBlobId,
+        ipfsUrl: `https://aggregator-devnet.walrus.space/v1/${walrusBlobId}`,
       });
 
       toast({

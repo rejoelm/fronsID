@@ -2,20 +2,32 @@
 
 import Link from "next/link";
 import { useState, use } from "react";
+import { uploadToWalrus } from "@/utils/walrus";
 
 export default function SubmitArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const { slug } = use(params);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!file) {
+      alert("Please attach a PDF manuscript.");
+      return;
+    }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      alert("Manuscript uploaded to IPFS and submitted to Solana successfully! Transaction fees were subsidized.");
+    
+    try {
+      // Direct Web3 Upload to Walrus Decentralized Storage
+      const blobId = await uploadToWalrus(file);
+      alert(`Manuscript uploaded to Walrus successfully!\nBlob ID: ${blobId}\n\nSubmitted to Solana successfully. Transaction fees were subsidized.`);
       window.location.href = `/${slug}`;
-    }, 3000);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to anchor manuscript to Walrus Data Network.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

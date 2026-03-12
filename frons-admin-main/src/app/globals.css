@@ -1,0 +1,502 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* FRONS Grand Design — v2.0 */
+
+@layer base {
+  :root {
+    /* Grand Design Palette */
+    --background: 240 33% 99%;          /* #F8F8FD off-white */
+    --foreground: 234 48% 33%;          /* #2C337A navy */
+    --card: 0 0% 100%;
+    --card-foreground: 234 48% 33%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 234 48% 33%;
+    --primary: 234 48% 33%;             /* #2C337A navy */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 245 91% 94%;           /* #E5E0FE lavender */
+    --secondary-foreground: 234 48% 33%;
+    --muted: 245 91% 94%;              /* #E5E0FE lavender */
+    --muted-foreground: 234 20% 50%;
+    --accent: 326 100% 89%;            /* #FFC6DE pink */
+    --accent-foreground: 234 48% 33%;
+    --destructive: 0 84% 60%;          /* #ef4444 red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 245 40% 92%;
+    --input: 245 40% 92%;
+    --ring: 234 48% 33%;
+    --radius: 0.75rem;
+
+    /* Semantic colors */
+    --success: 160 84% 39%;            /* #10b981 green */
+    --warning: 38 92% 50%;             /* #f59e0b amber */
+    --orange: 27 97% 54%;              /* #FB7720 orange CTA */
+
+    --chart-1: 27 97% 54%;             /* orange */
+    --chart-2: 234 48% 33%;            /* navy */
+    --chart-3: 326 100% 89%;           /* pink */
+    --chart-4: 245 91% 94%;            /* lavender */
+    --chart-5: 160 84% 39%;            /* green */
+  }
+
+  .dark {
+    --background: 234 48% 8%;
+    --foreground: 245 91% 94%;
+    --card: 234 48% 12%;
+    --card-foreground: 245 91% 94%;
+    --popover: 234 48% 12%;
+    --popover-foreground: 245 91% 94%;
+    --primary: 245 91% 94%;
+    --primary-foreground: 234 48% 33%;
+    --secondary: 234 40% 18%;
+    --secondary-foreground: 245 91% 94%;
+    --muted: 234 40% 18%;
+    --muted-foreground: 245 50% 70%;
+    --accent: 326 60% 30%;
+    --accent-foreground: 245 91% 94%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 234 40% 18%;
+    --input: 234 40% 18%;
+    --ring: 245 91% 94%;
+    --chart-1: 27 97% 54%;
+    --chart-2: 245 91% 94%;
+    --chart-3: 326 100% 89%;
+    --chart-4: 234 40% 40%;
+    --chart-5: 160 84% 39%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-dm-sans), "DM Sans", sans-serif;
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  [role="button"],
+  [tabindex] {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  .font-spectral {
+    font-family: "Spectral", serif;
+    font-style: italic;
+  }
+}
+
+/* GSAP Animation Classes */
+.gsap-fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.gsap-fade-in.animate {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.gsap-slide-up {
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+.gsap-slide-up.animate {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.gsap-scale-in {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.gsap-scale-in.animate {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, hsl(240 5.9% 10%) 0%, hsl(240 3.8% 46.1%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-blue {
+  background: linear-gradient(135deg, hsl(240 5.9% 10%) 0%, hsl(240 4.8% 95.9%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass Effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dynamic-shadow-dom {
+  --dynamic-connect-button-background: hsl(240 5.9% 10%);
+  --dynamic-connect-button-color: hsl(0 0% 98%);
+  --dynamic-connect-button-background-hover: hsl(240 3.8% 46.1%);
+  --dynamic-connect-button-color-hover: hsl(0 0% 98%);
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pulse-animation {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Blob Animation */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Dynamic Widget Styling - Updated for Zinc theme */
+.dynamic-shadow-dom {
+  --dynamic-connect-button-background: hsl(240 5.9% 10%) !important;
+  --dynamic-connect-button-color: hsl(0 0% 98%) !important;
+  --dynamic-connect-button-border: 1px solid hsl(240 5.9% 10%) !important;
+  --dynamic-connect-button-border-radius: 0.5rem !important;
+  --dynamic-connect-button-background-hover: hsl(240 3.8% 46.1%) !important;
+  --dynamic-connect-button-color-hover: hsl(0 0% 98%) !important;
+  --dynamic-connect-button-border-hover: 1px solid hsl(240 3.8% 46.1%) !important;
+  --dynamic-modal-background: hsl(0 0% 100%) !important;
+  --dynamic-modal-border-color: hsl(240 5.9% 90% / 0.2) !important;
+  --dynamic-modal-text-color: hsl(240 10% 3.9%) !important;
+  z-index: 9999 !important;
+}
+
+/* Privy modal fixes for Chrome */
+.privy-modal,
+[data-privy-modal] {
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}
+
+.privy-backdrop,
+[data-privy-backdrop] {
+  z-index: 9998 !important;
+}
+
+/* Loading Animation - Text Highlight */
+.text-highlight {
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  transition: color 0.3s ease, background-color 0.3s ease,
+    background-size 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  position: relative;
+  display: inline-block;
+}
+
+.text-highlight.active {
+  background-size: 100% 100%;
+}
+
+@keyframes loadingFloat {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  25% {
+    transform: translateY(-15px) translateX(8px);
+  }
+  50% {
+    transform: translateY(0px) translateX(-8px);
+  }
+  75% {
+    transform: translateY(15px) translateX(8px);
+  }
+}
+
+.loading-float {
+  animation: loadingFloat 3s ease-in-out infinite;
+}
+
+.word {
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+  transform-origin: bottom;
+}
+
+.char {
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+  transform-origin: bottom;
+}
+
+/* Horizontal Scroll Animation */
+.swipe-section {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: visible;
+}
+
+.swipe-section .panel {
+  position: absolute;
+}
+
+.vh-200 {
+  height: 100vh !important;
+}
+
+/* Prevent overscroll behavior */
+body,
+html {
+  overscroll-behavior: none;
+  min-height: 100vh;
+}
+
+/* Scroll Animation Component Styles */
+@property --hue {
+  initial-value: 0;
+  syntax: "<number>";
+  inherits: false;
+}
+
+div.tp-dfwv {
+  position: fixed;
+}
+
+@property --chroma {
+  initial-value: 0;
+  syntax: "<number>";
+  inherits: true;
+}
+
+/* Fluid Typography */
+:root {
+  --font-size-min: 14;
+  --font-size-max: 20;
+  --font-ratio-min: 1.1;
+  --font-ratio-max: 1.33;
+  --font-width-min: 375;
+  --font-width-max: 1500;
+}
+
+.fluid {
+  --fluid-min: calc(
+    var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0))
+  );
+  --fluid-max: calc(
+    var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0))
+  );
+  --fluid-preferred: calc(
+    (var(--fluid-max) - var(--fluid-min)) /
+      (var(--font-width-max) - var(--font-width-min))
+  );
+  --fluid-type: clamp(
+    (var(--fluid-min) / 16) * 1rem,
+    ((var(--fluid-min) / 16) * 1rem) -
+      (((var(--fluid-preferred) * var(--font-width-min)) / 16) * 1rem) +
+      (var(--fluid-preferred) * var(--variable-unit, 100vi)),
+    (var(--fluid-max) / 16) * 1rem
+  );
+  font-size: var(--fluid-type);
+}
+
+/* Scroll Animation Effects */
+:root {
+  --start: 0;
+  --end: 360;
+  --lightness: 65%;
+  --base-chroma: 0.3;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --lightness: 75%;
+  }
+}
+
+.scroll-list {
+  --step: calc((var(--end) - var(--start)) / (var(--count) - 1));
+}
+
+.scroll-list li:not(:last-of-type) {
+  color: oklch(
+    var(--lightness) var(--base-chroma)
+      calc(var(--start) + (var(--step) * var(--i)))
+  );
+}
+
+.menu-wrap {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.menu__item {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 -1px #fff;
+}
+
+.menu__item-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60%;
+  position: relative;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  font-weight: 600;
+  color: hsl(240 5.9% 10%);
+  letter-spacing: -0.02em;
+  font-size: 3vh;
+}
+
+.menu__item-link:hover {
+  color: var(--primary);
+}
+
+.menu__item-link:focus:not(:focus-visible) {
+  color: #fff;
+}
+
+.marquee {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: #fff;
+  transform: translate3d(0, 101%, 0);
+  transition: transform 0.5s ease-expo;
+}
+
+.marquee__inner-wrap {
+  height: 100%;
+  width: 200%;
+  display: flex;
+  transform: translateX(0);
+}
+
+.marquee__inner {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 100%;
+  width: 200%;
+  will-change: transform;
+  animation: marquee 30s linear infinite;
+}
+
+.marquee span {
+  color: hsl(240 10% 3.9%);
+  white-space: nowrap;
+  font-weight: 400;
+  font-size: 3vh;
+  line-height: 1.2;
+  padding: 1vh 1vw 0;
+}
+
+.marquee__img {
+  width: 200px;
+  height: 7vh;
+  margin: 2em 2vw;
+  padding: 1em 0;
+  border-radius: 50px;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+
+.menu__item-link:hover + .marquee {
+  transform: translate3d(0, 0%, 0);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}

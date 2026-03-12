@@ -219,8 +219,10 @@ impl Manuscript {
 }
 
 impl DOCIRegistry {
-    pub fn generate_doci(&self) -> String {
-        format!("10.fronsciers/manuscript.{}.{:04}", self.current_year, self.next_sequence)
+    pub fn generate_doci(&self, author: &Pubkey) -> String {
+        let author_str = author.to_string();
+        let identifier = &author_str[0..8];
+        format!("FRONS/R-{}-{:04}", identifier, self.next_sequence)
     }
 }
 

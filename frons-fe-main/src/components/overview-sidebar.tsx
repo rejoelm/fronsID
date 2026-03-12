@@ -10,6 +10,7 @@ import {
   BookOpenIcon,
   FilePen,
   ArrowUpFromLine,
+  Fingerprint
 } from "lucide-react";
 import { WalletConnection } from "./wallet-connection";
 import { motion } from "motion/react";
@@ -56,6 +57,11 @@ export function OverviewSidebar({ connected }: { connected: boolean }) {
       label: "Your Profile",
       href: "/your-profile",
       icon: <UserIcon className="h-5 w-5" />,
+    },
+    {
+      label: "My Publications",
+      href: "/my-publications",
+      icon: <Fingerprint className="h-5 w-5" />,
     },
   ];
 

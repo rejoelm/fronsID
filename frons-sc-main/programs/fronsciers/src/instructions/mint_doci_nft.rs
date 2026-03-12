@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Mint, MintTo, Token, TokenAccount};
 use anchor_spl::associated_token::AssociatedToken;
+use anchor_spl::metadata::{create_metadata_accounts_v3, CreateMetadataAccountsV3, Metadata, mpl_token_metadata::types::DataV2};
 use crate::{state::*, constants::*};
 use sha2::{Sha256, Digest};
 
@@ -30,7 +31,8 @@ pub fn handler(
 
     require!(manuscript.is_accepted(), crate::error::FronsciersError::ManuscriptNotAccepted);
 
-    let doci = registry.generate_doci();
+    let doci_string = registry.generate_doci(&ctx.accounts.author.key());
+    let doci = doci_string.clone();
 
     let mut hasher = Sha256::new();
     hasher.update(manuscript.ipfs_hash.as_bytes());
@@ -97,6 +99,39 @@ pub fn handler(
     let cpi_context = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
     token::mint_to(cpi_context, 1)?;
 
+    // Metaplex CPI
+    let metadata_data = DataV2 {
+        name: doci.clone(), // Set NFT Name to FRONS/R-...
+        symbol: String::from("DOCI"),
+        uri: ctx.accounts.doci_manuscript.metadata_uri.clone(),
+        seller_fee_basis_points: 0,
+        creators: None,
+        collection: None,
+        uses: None,
+    };
+
+    let metadata_ctx = CpiContext::new_with_signer(
+        ctx.accounts.token_metadata_program.to_account_info(),
+        CreateMetadataAccountsV3 {
+            metadata: ctx.accounts.metadata_account.to_account_info(),
+            mint: ctx.accounts.doci_mint.to_account_info(),
+            mint_authority: ctx.accounts.doci_manuscript.to_account_info(),
+            update_authority: ctx.accounts.doci_manuscript.to_account_info(),
+            payer: ctx.accounts.author.to_account_info(),
+            system_program: ctx.accounts.system_program.to_account_info(),
+            rent: ctx.accounts.rent.to_account_info(),
+        },
+        signer_seeds,
+    );
+
+    create_metadata_accounts_v3(
+        metadata_ctx,
+        metadata_data,
+        true, // is_mutable
+        true, // update_authority_is_signer
+        None, // collection_details
+    )?;
+
     emit!(DOCINFTMinted {
         mint: doci_mint_key,
         doci: doci.clone(),
@@ -158,7 +193,13 @@ pub struct MintDOCINFT<'info> {
     )]
     pub author_token_account: Account<'info, TokenAccount>,
 
+    /// CHECK: Metaplex will validate this on protocol side
+    #[account(mut)]
+    pub metadata_account: UncheckedAccount<'info>,
+
     pub token_program: Program<'info, Token>,
     pub associated_token_program: Program<'info, AssociatedToken>,
+    pub token_metadata_program: Program<'info, Metadata>,
+    pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
 } 

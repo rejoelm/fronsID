@@ -15,13 +15,16 @@ This repository is organized into distinct, human-readable modules. Each folder 
 - **`/frons_j_sc`**: The specialized Solana smart contract enabling private editorial boards, B2B submission flows, and institutional peer review.
 
 ### 3. FRONS Vault & AI Chat (Advanced Features)
-- **`/frons-chat-main`**: A dedicated, advanced frontend housing the **My Vault** and **AI Chat** features. Offers client-side AES-256-GCM encryption for private research data, Walrus network integration, and an "Evidence Cascade" AI assistant for querying public and private research contexts, fully integrated with Privy gasless transactions and real-time USDC credit balances.
+- **`/frons-chat-main`**: A dedicated, advanced frontend housing the **My Vault** and **AI Chat** features. Offers client-side AES-256-GCM encryption for private research data, Walrus network integration, and an "Evidence Cascade" AI assistant for querying public and private research contexts, fully integrated with Privy gasless transactions.
 
 ### 4. FRONS Profile Cards (NFC)
-- **`/frons-card-main`**: The public-facing profile application linked to physical FRONS NFC cards. Displays beautiful, LinkedIn-style verified academic resumes, dynamically fetching on-chain publications and Soulbound verification badges.
+- **`/frons-card-main`**: The public-facing profile application linked to physical FRONS NFC cards. Displays beautiful, verified academic resumes, dynamically fetching on-chain publications and Soulbound verification badges.
+
+### 5. Master Admin Console (Global Infrastructure)
+- **`/frons-admin-main`**: A completely isolated, high-security admin portal (running on port 3004). Allows the core team to manage Solana protocol parameter accounts, monitor ecosystem analytics from Supabase, and directly "seed" high-quality PDF evidence into the AI database bypassing the public review queue.
 
 ## 🔐 Web3 Integration & Authentication
-Across all frontends (`frons-fe-main`, `frons-j-fe`, `frons-chat-main`), user authentication is seamlessly unified using **Privy**. Researchers can connect via Email, Google, or native Solana wallets, with their identity and real-time USDC credit balances explicitly synchronized across the entire ecosystem.
+Across the entire ecosystem, user authentication is seamlessly unified using **Privy**. Researchers can connect via Email, Google, or native Solana wallets. The **Metaplex Token Metadata** program is utilized to provide "True Cryptographic Ownership" of publications (DOCI NFTs), visible in the "My Publications" dashboard.
 
 ## 🚀 Getting Started
 

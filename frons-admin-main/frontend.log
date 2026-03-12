@@ -1,0 +1,34 @@
+
+> fronsciers-frontend@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.3.5
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.79.212:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1666ms
+ ✓ Compiled /middleware in 149ms (108 modules)
+ ○ Compiling /[username] ...
+ ✓ Compiled /[username] in 6s (9125 modules)
+ ✓ Compiled in 473ms (4398 modules)
+ HEAD /rejoelm 200 in 7038ms
+ GET /rejoelm 200 in 29ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1709ms (9922 modules)
+ GET / 200 in 2375ms
+ GET / 200 in 31ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 856ms (9926 modules)
+ GET /_next/static/css/app/layout.css?v=1753278069745 404 in 1260ms
+ GET /_next/static/css/app/layout.css?v=1753278069185 404 in 1261ms
+ GET /_next/static/chunks/main-app.js?v=1753278069745 404 in 708ms
+ GET /_next/static/chunks/main-app.js?v=1753278069185 404 in 711ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 59ms
+ GET /_next/static/chunks/app/not-found.js 404 in 63ms
+ GET /_next/static/chunks/app/layout.js 404 in 65ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 54ms
+ GET /_next/static/chunks/app/layout.js 404 in 53ms
+ GET /_next/static/chunks/app/not-found.js 404 in 36ms
+[?25h
