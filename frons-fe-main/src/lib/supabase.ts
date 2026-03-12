@@ -73,18 +73,72 @@ export async function getArticleByDoci(doci: string): Promise<Article | null> {
   return data as Article;
 }
 
-export async function getLeaderboard(period?: string, limit = 20): Promise<ResearcherProfile[]> {
-  const { data, error } = await supabase
-    .from("researcher_profiles")
-    .select("*")
-    .order("impact_score", { ascending: false })
+export interface LeaderboardEntry {
+  rank: number;
+  researcher_name: string;
+  institution: string;
+  impact_score: number;
+  citation_count: number;
+  pcs_score: number;
+  pool_payout_usdc: number;
+  period: string;
+}
+
+export async function getLeaderboard(period?: string, limit = 50): Promise<LeaderboardEntry[]> {
+  let q = supabase
+    .from("leaderboard")
+    .select(`
+      rank,
+      impact_score,
+      citation_count,
+      pcs_score,
+      pool_payout_usdc,
+      period,
+      researchers ( display_name, institution )
+    `)
+    .order("rank", { ascending: true })
     .limit(limit);
 
+  if (period) {
+    q = q.eq("period", period);
+  }
+
+  const { data, error } = await q;
   if (error) {
     console.error("[supabase] getLeaderboard error:", error.message);
     return [];
   }
-  return (data as ResearcherProfile[]) ?? [];
+
+  // Flatten the joined researchers data
+  return (data ?? []).map((row: Record<string, unknown>) => {
+    const researcher = row.researchers as { display_name?: string; institution?: string } | null;
+    return {
+      rank: row.rank as number,
+      researcher_name: researcher?.display_name ?? "Unknown",
+      institution: researcher?.institution ?? "—",
+      impact_score: row.impact_score as number,
+      citation_count: row.citation_count as number,
+      pcs_score: row.pcs_score as number,
+      pool_payout_usdc: row.pool_payout_usdc as number,
+      period: row.period as string,
+    };
+  });
+}
+
+export async function getLeaderboardPeriods(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("leaderboard")
+    .select("period")
+    .order("period", { ascending: false });
+
+  if (error) {
+    console.error("[supabase] getLeaderboardPeriods error:", error.message);
+    return [];
+  }
+
+  // Deduplicate periods
+  const unique = [...new Set((data ?? []).map((r: { period: string }) => r.period))];
+  return unique;
 }
 
 export async function getResearcherProfile(walletAddress: string): Promise<ResearcherProfile | null> {
