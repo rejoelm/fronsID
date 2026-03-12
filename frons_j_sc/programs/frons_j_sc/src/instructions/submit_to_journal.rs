@@ -34,13 +34,10 @@ pub struct SubmitToJournal<'info> {
 
 pub fn handler(ctx: Context<SubmitToJournal>, ipfs_hash: String) -> Result<()> {
     // 1. SPL Token Transfer for Submission Fee (USDC)
-    // Hardcoded PROTOCOL_TREASURY_USDC_AUTHORITY for security instead of trusting client-side input
-    // In a real production scenario, this would be a PDA or a verified ProtocolState account.
-    let expected_treasury_authority = pubkey!("11111111111111111111111111111111"); 
-    
-    // Check that the recipient account's owner (authority) is our official treasury
+    // Validate that the fee recipient token account is owned by the Journal's authority
+    // This prevents users from providing their own account as the fee destination
     require!(
-        ctx.accounts.protocol_usd_account.owner == expected_treasury_authority,
+        ctx.accounts.protocol_usd_account.owner == ctx.accounts.journal.authority,
         crate::error::FronsJError::Unauthorized
     );
 

@@ -32,23 +32,25 @@ ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.chat_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.walrus_blobs ENABLE ROW LEVEL SECURITY;
 
--- Tightened RLS policies ensuring users can only manage their own data
--- Note: In a production app with Supabase Auth, you would use auth.uid() or a JWT claim
--- For this implementation, we isolate by the wallet_address passed in the query filters
-
--- Tightened RLS policies ensuring users can only manage their own data
--- Note: In a production app with Supabase Auth, you would use auth.uid() or a JWT claim
--- For this implementation, we isolate by the wallet_address passed in the query filters
+-- Tightened RLS policies ensuring users can only manage their own data.
+-- IMPORTANT: The backend (Edge Function / middleware) MUST call
+--   SET LOCAL app.current_wallet_address = '<verified_wallet>';
+-- before every Supabase query. Never let the client set this directly.
+-- For production with Supabase Auth, migrate to auth.uid() or a JWT claim.
 
 CREATE POLICY "Users can insert their own record" ON public.users
   FOR INSERT WITH CHECK (true); -- Initial creation is open, can be tightened with a trigger
 
-CREATE POLICY "Users can only view their own record" ON public.users
-  FOR SELECT USING (true); -- Keep public for citation/profile lookup
-  
+CREATE POLICY "Users can view profiles" ON public.users
+  FOR SELECT USING (true); -- Public for citation/profile lookup
+
+CREATE POLICY "Users can update their own record" ON public.users
+  FOR UPDATE USING (wallet_address = (select current_setting('app.current_wallet_address', true)))
+  WITH CHECK (wallet_address = (select current_setting('app.current_wallet_address', true)));
+
 CREATE POLICY "Users can manage their own chat history" ON public.chat_history
   FOR ALL USING (wallet_address = (select current_setting('app.current_wallet_address', true)));
-  
+
 CREATE POLICY "Users can manage their own walrus blobs" ON public.walrus_blobs
   FOR ALL USING (wallet_address = (select current_setting('app.current_wallet_address', true)));
 
