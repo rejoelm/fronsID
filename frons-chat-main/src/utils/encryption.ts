@@ -1,11 +1,11 @@
 // src/utils/encryption.ts
 
 /**
- * Generates an encryption key from a user password using PBKDF2.
+ * Generates an encryption key from a user password using PBKDF2 with a per-user salt.
  * @param password The user's input password.
- * @param salt Optional deterministic salt (could be derived from user ID to ensure consistent keys across sessions).
+ * @param userIdentifier Unique user string (e.g. Wallet Address) used to derive a unique salt.
  */
-export async function deriveKey(password: string, saltString: string = "frons-vault-salt"): Promise<CryptoKey> {
+export async function deriveKey(password: string, userIdentifier: string): Promise<CryptoKey> {
   const enc = new TextEncoder();
   const keyMaterial = await window.crypto.subtle.importKey(
     "raw",
@@ -15,6 +15,8 @@ export async function deriveKey(password: string, saltString: string = "frons-va
     ["deriveBits", "deriveKey"]
   );
 
+  // Derive a unique salt from the user identifier combined with a protocol constant
+  const saltString = `frons-vault-${userIdentifier}`;
   const salt = enc.encode(saltString);
 
   return window.crypto.subtle.deriveKey(

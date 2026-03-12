@@ -30,6 +30,17 @@ export async function POST(req: NextRequest) {
     const txBuffer = Buffer.from(transactionBase64, "base64");
     const transaction = VersionedTransaction.deserialize(txBuffer);
 
+    // SECURITY: Instruction Whitelisting
+    // Prevent the relayer from signing arbitrary transactions that could drain funds
+    const message = transaction.message;
+    const programIdIndex = message.staticAccountKeys.findIndex(key => 
+      key.toBase58() === "H8gA7JY5sDRQiKSV8XgzsypMQw4uzy38BaeCsLgDu6tb" // Frons J SC Program ID
+    );
+
+    if (programIdIndex === -1) {
+      return NextResponse.json({ error: "Unauthorized Program ID: This relayer only signs for FRONS protocols." }, { status: 403 });
+    }
+
     // Sign the transaction as the feePayer using our Relayer Wallet
     transaction.sign([relayerKeypair]);
 

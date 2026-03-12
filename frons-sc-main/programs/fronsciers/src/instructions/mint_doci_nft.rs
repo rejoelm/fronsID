@@ -30,6 +30,7 @@ pub fn handler(
     let manuscript = &mut ctx.accounts.manuscript;
 
     require!(manuscript.is_accepted(), crate::error::FronsciersError::ManuscriptNotAccepted);
+    require!(manuscript.author == ctx.accounts.author.key(), crate::error::FronsciersError::Unauthorized);
 
     let doci_string = registry.generate_doci(&ctx.accounts.author.key());
     let doci = doci_string.clone();

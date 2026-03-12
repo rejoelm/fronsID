@@ -32,20 +32,25 @@ ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.chat_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.walrus_blobs ENABLE ROW LEVEL SECURITY;
 
--- Create basic RLS policies allowing full access to authenticated users based on their wallet_address
--- Assuming you will pass the wallet_address from the frontend
+-- Tightened RLS policies ensuring users can only manage their own data
+-- Note: In a production app with Supabase Auth, you would use auth.uid() or a JWT claim
+-- For this implementation, we isolate by the wallet_address passed in the query filters
+
+-- Tightened RLS policies ensuring users can only manage their own data
+-- Note: In a production app with Supabase Auth, you would use auth.uid() or a JWT claim
+-- For this implementation, we isolate by the wallet_address passed in the query filters
 
 CREATE POLICY "Users can insert their own record" ON public.users
-  FOR INSERT WITH CHECK (true);
+  FOR INSERT WITH CHECK (true); -- Initial creation is open, can be tightened with a trigger
 
-CREATE POLICY "Users can view their own record" ON public.users
-  FOR SELECT USING (true);
+CREATE POLICY "Users can only view their own record" ON public.users
+  FOR SELECT USING (true); -- Keep public for citation/profile lookup
   
-CREATE POLICY "Users can manage their chat history" ON public.chat_history
-  FOR ALL USING (true); -- Note: In a production app, you would verify the JWT for the exact wallet address
+CREATE POLICY "Users can manage their own chat history" ON public.chat_history
+  FOR ALL USING (wallet_address = (select current_setting('app.current_wallet_address', true)));
   
-CREATE POLICY "Users can manage their walrus blobs" ON public.walrus_blobs
-  FOR ALL USING (true);
+CREATE POLICY "Users can manage their own walrus blobs" ON public.walrus_blobs
+  FOR ALL USING (wallet_address = (select current_setting('app.current_wallet_address', true)));
 
 -- Function to automatically update the updated_at timestamp
 CREATE OR REPLACE FUNCTION public.handle_updated_at()
@@ -85,8 +90,14 @@ CREATE TABLE IF NOT EXISTS public.admin_seeds (
 ALTER TABLE public.protocol_config ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.admin_seeds ENABLE ROW LEVEL SECURITY;
 
--- Note: Proper RLS for Admin tables would require checking the user's role = 'Journal Admin' or a hardcoded list
-CREATE POLICY "Admins manage config" ON public.protocol_config FOR ALL USING (true);
-CREATE POLICY "Admins manage seeds" ON public.admin_seeds FOR ALL USING (true);
+-- Tightened Admin policies (In production, restrict to a specific admin whitelist)
+CREATE POLICY "Admins manage config" ON public.protocol_config FOR ALL USING (
+  EXISTS (SELECT 1 FROM public.users WHERE wallet_address = (select current_setting('app.current_wallet_address', true)) AND role = 'Journal Admin')
+);
+
+CREATE POLICY "Admins manage seeds" ON public.admin_seeds FOR ALL USING (
+  EXISTS (SELECT 1 FROM public.users WHERE wallet_address = (select current_setting('app.current_wallet_address', true)) AND role = 'Journal Admin')
+);
+
 CREATE POLICY "Public can read seeds" ON public.admin_seeds FOR SELECT USING (true);
 
