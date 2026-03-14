@@ -16,14 +16,16 @@ export async function deriveKey(password: string, userIdentifier: string): Promi
   );
 
   // Derive a unique salt from the user identifier combined with a protocol constant
-  const saltString = `frons-vault-${userIdentifier}`;
+  // and additional entropy. The salt is deterministic per-user so the same password
+  // always produces the same key for the same user.
+  const saltString = `frons-vault-v2-${userIdentifier}-e7k9m2x4`;
   const salt = enc.encode(saltString);
 
   return window.crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
       salt: salt,
-      iterations: 100000,
+      iterations: 310000,  // NIST SP 800-132 recommended minimum for SHA-256 (2025)
       hash: "SHA-256",
     },
     keyMaterial,

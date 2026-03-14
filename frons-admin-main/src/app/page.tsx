@@ -22,28 +22,56 @@ export default function GlobalAdminDashboard() {
   const router = useRouter();
   const { toast } = useToast();
   
-  // Bypass Privy for local Developer Admin testing
-  const connected = true;
-  const activeWallet = "FronsMasterAdmin";
+  // Admin whitelist — only these wallet addresses can access the admin console
+  const ADMIN_WALLETS = (process.env.NEXT_PUBLIC_ADMIN_WALLETS || "").split(",").filter(Boolean);
 
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [activeTab, setActiveTab] = useState("analytics");
   const [isMounted, setIsMounted] = useState(false);
+  const [activeWallet, setActiveWallet] = useState<string | null>(null);
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Mock checking for Admin role. In production, check from a secured Supabase list or token.
+  // Check admin role via Privy wallet and whitelist
   useEffect(() => {
-    if (activeWallet) {
-      // Simulating Admin verification
-      // For now, allow the user to view it as Admin
-      setIsAdmin(true); 
-    } else {
-      setIsAdmin(false);
+    async function checkAdmin() {
+      try {
+        // In production, get wallet from Privy auth context
+        // For now, try to get from Privy cookie/session
+        const { data: userData } = await supabase
+          .from('users')
+          .select('wallet_address, role')
+          .eq('role', 'Journal Admin')
+          .limit(1);
+
+        // Get the authenticated user's wallet from the session
+        // This must match the Privy-authenticated wallet
+        const walletFromSession = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('privy-wallet='))
+          ?.split('=')[1];
+
+        if (walletFromSession && ADMIN_WALLETS.includes(walletFromSession)) {
+          setActiveWallet(walletFromSession);
+          setConnected(true);
+          setIsAdmin(true);
+        } else if (ADMIN_WALLETS.length === 0) {
+          // No admin wallets configured — deny all access
+          console.error("NEXT_PUBLIC_ADMIN_WALLETS not configured. Admin access denied.");
+          setIsAdmin(false);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch (err) {
+        console.error("Admin verification failed:", err);
+        setIsAdmin(false);
+      }
     }
-  }, [activeWallet]);
+    checkAdmin();
+  }, []);
 
   if (!isMounted) {
     return (

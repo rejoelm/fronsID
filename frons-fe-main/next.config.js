@@ -48,6 +48,10 @@ const nextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
           },
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.privy.io; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co https://*.helius-rpc.com https://api.devnet.solana.com wss://api.devnet.solana.com https://*.privy.io https://*.walrus.site; img-src 'self' data: https:; font-src 'self' data:; frame-src https://*.privy.io;",
+          },
         ],
       });
     }

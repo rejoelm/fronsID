@@ -19,8 +19,16 @@ pub fn handler(
     let doci_manuscript = &mut ctx.accounts.doci_manuscript;
     let author_vault = &mut ctx.accounts.author_vault;
 
-    // Increment citation count
-    doci_manuscript.citation_count += 1;
+    // SECURITY: Validate that authors array is not empty before accessing (C11)
+    require!(
+        !doci_manuscript.authors.is_empty(),
+        FronsciersError::InvalidCvHash  // Reuse existing error — means "invalid manuscript data"
+    );
+
+    // Increment citation count using checked arithmetic
+    doci_manuscript.citation_count = doci_manuscript.citation_count
+        .checked_add(1)
+        .ok_or(FronsciersError::ArithmeticOverflow)?;
 
     let fee = protocol.citation_fee;
 
@@ -65,14 +73,24 @@ pub fn handler(
     let cpi_context = CpiContext::new(ctx.accounts.token_program.to_account_info(), cpi_accounts);
     token::transfer(cpi_context, reserve_amount)?;
 
-    // Update author vault earnings
-    author_vault.total_earned += author_amount;
-    author_vault.claimable += author_amount;
-    author_vault.total_citations += 1;
+    // Update author vault earnings with checked arithmetic (M6)
+    author_vault.total_earned = author_vault.total_earned
+        .checked_add(author_amount)
+        .ok_or(FronsciersError::ArithmeticOverflow)?;
+    author_vault.claimable = author_vault.claimable
+        .checked_add(author_amount)
+        .ok_or(FronsciersError::ArithmeticOverflow)?;
+    author_vault.total_citations = author_vault.total_citations
+        .checked_add(1)
+        .ok_or(FronsciersError::ArithmeticOverflow)?;
 
-    // Track protocol stats
-    protocol.total_citations += 1;
-    protocol.total_revenue_usdc += fee;
+    // Track protocol stats with checked arithmetic
+    protocol.total_citations = protocol.total_citations
+        .checked_add(1)
+        .ok_or(FronsciersError::ArithmeticOverflow)?;
+    protocol.total_revenue_usdc = protocol.total_revenue_usdc
+        .checked_add(fee)
+        .ok_or(FronsciersError::ArithmeticOverflow)?;
 
     msg!("Citation recorded for DOCI {} — fee split: platform={}, author={}, pool={}, reserve={}",
         doci_manuscript.doci, platform_amount, author_amount, pool_amount, reserve_amount);
@@ -82,7 +100,12 @@ pub fn handler(
 #[derive(Accounts)]
 pub struct RecordCitation<'info> {
     /// The published manuscript being cited
-    #[account(mut)]
+    /// SECURITY: Validate via PDA seeds to prevent forged accounts (H13)
+    #[account(
+        mut,
+        seeds = [DOCI_MANUSCRIPT_SEED, doci_manuscript.manuscript_account.as_ref()],
+        bump = doci_manuscript.bump
+    )]
     pub doci_manuscript: Account<'info, DOCIManuscript>,
 
     /// Author's vault to accumulate earnings

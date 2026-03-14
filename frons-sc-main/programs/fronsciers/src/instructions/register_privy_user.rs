@@ -35,7 +35,13 @@ pub fn handler(
 
     let user = &mut ctx.accounts.user;
     let embedded_wallet = ctx.accounts.embedded_wallet.key();
-    
+
+    // SECURITY: Validate the embedded wallet is not the zero address
+    require!(
+        embedded_wallet != Pubkey::default(),
+        FronsciersError::MissingEmbeddedWallet
+    );
+
     user.wallet = embedded_wallet;
     user.privy_user_id = Some(privy_user_id);
     user.embedded_wallet = Some(embedded_wallet);

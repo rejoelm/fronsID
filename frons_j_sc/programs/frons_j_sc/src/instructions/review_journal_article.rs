@@ -17,16 +17,24 @@ pub fn handler(ctx: Context<ReviewJournalArticle>, decision: String) -> Result<(
     let article = &mut ctx.accounts.article;
     let journal = &ctx.accounts.journal;
 
+    // SECURITY: All validation checks MUST happen BEFORE any state mutation (H9)
     require!(article.journal_id == journal.key(), FronsJError::Unauthorized);
     require!(journal.editorial_board.contains(&ctx.accounts.reviewer.key()), FronsJError::Unauthorized);
     require!(article.is_pending() || article.status == ArticleStatus::InReview, FronsJError::InvalidArticleStatus);
     require!(!article.reviewers.contains(&ctx.accounts.reviewer.key()), FronsJError::AlreadyReviewer);
-    
+
+    // Validate decision string
+    require!(
+        decision == "Accepted" || decision == "Rejected",
+        FronsJError::InvalidArticleStatus
+    );
+
+    // Now safe to mutate state
     article.status = ArticleStatus::InReview;
     article.reviewers.push(ctx.accounts.reviewer.key());
     article.decisions.push(decision.clone());
-    
-    // Check if 2 reviewers reached
+
+    // Check if 2 reviewers reached for final decision
     if article.reviewers.len() >= 2 {
         if article.get_acceptance_count() >= 2 {
             article.status = ArticleStatus::Accepted;
@@ -41,6 +49,6 @@ pub fn handler(ctx: Context<ReviewJournalArticle>, decision: String) -> Result<(
              }
         }
     }
-    
+
     Ok(())
 }

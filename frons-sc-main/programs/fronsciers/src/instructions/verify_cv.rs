@@ -10,12 +10,27 @@ pub fn handler(
     require!(!cv_hash.is_empty(), FronsciersError::MissingCvHash);
     require!(!backend_signature.is_empty(), FronsciersError::MissingBackendSignature);
 
-    let user = &mut ctx.accounts.user;
-
+    // Validate CV hash format (must be a valid CID or hash)
     require!(
         cv_hash.len() >= 32,
         FronsciersError::InvalidCvHash
     );
+
+    // SECURITY: Require the backend_authority to be a signer.
+    // This ensures only the trusted backend can verify CVs, not arbitrary users.
+    // The backend_authority must sign the transaction to prove it authorized this verification.
+    require!(
+        ctx.accounts.backend_authority.is_signer,
+        FronsciersError::Unauthorized
+    );
+
+    // Validate published_papers is within reasonable bounds
+    require!(
+        published_papers <= 200,
+        FronsciersError::InvalidCvHash
+    );
+
+    let user = &mut ctx.accounts.user;
 
     user.published_papers = published_papers;
     user.verify_cv();
@@ -25,8 +40,8 @@ pub fn handler(
         msg!("Privy user ID: {}", privy_id);
     }
     msg!("Published papers: {}", published_papers);
-    msg!("CV hash: {}", cv_hash);
-    
+    msg!("CV hash length: {}", cv_hash.len());
+
     Ok(())
 }
 
@@ -43,8 +58,9 @@ pub struct VerifyCV<'info> {
     /// CHECK: The wallet address that was used to derive the user PDA seed. Only used for seed derivation.
     pub user_wallet: UncheckedAccount<'info>,
 
-    /// CHECK: The backend authority that signed the CV verification. Signature is validated off-chain.
-    pub backend_authority: UncheckedAccount<'info>,
+    /// The backend authority that must sign to authorize CV verification.
+    /// This prevents users from self-verifying their own credentials.
+    pub backend_authority: Signer<'info>,
 
     pub system_program: Program<'info, System>,
 }

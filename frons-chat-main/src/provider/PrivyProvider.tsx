@@ -3,7 +3,7 @@
 import { PrivyProvider } from "@privy-io/react-auth";
 import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
 
-const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || "clk4v6m200000mh08wuz1n97m"; // Fallback to common dev ID if not set
+const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || "";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   if (!PRIVY_APP_ID) {

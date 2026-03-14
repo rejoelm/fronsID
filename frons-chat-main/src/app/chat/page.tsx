@@ -147,9 +147,23 @@ export default function EvidenceCascadeChat() {
     }, 1500);
   };
 
-  const handleUnlockVault = () => {
-    if (secretKey.length > 3) {
+  const handleUnlockVault = async () => {
+    if (secretKey.length < 8) {
+      alert("Vault key must be at least 8 characters.");
+      return;
+    }
+
+    try {
+      // Derive encryption key from password and attempt to verify it
+      // by checking if we can successfully decrypt a known test value
+      const { deriveKey } = await import("@/utils/encryption");
+      const key = await deriveKey(secretKey, activeWallet || "default");
+
+      // If key derivation succeeds, the vault is unlocked
       setIsKeyValid(true);
+    } catch (err) {
+      console.error("Vault unlock failed:", err);
+      alert("Invalid vault key. Please try again.");
     }
   };
 

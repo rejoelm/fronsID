@@ -7,12 +7,15 @@ pub fn handler(
   decision: ReviewDecision,
 ) -> Result<()> {
   let manuscript = &mut ctx.accounts.manuscript;
-  let protocol = &mut ctx.accounts.protocol_state; // Elevated to mutable for revenue tracking
-  
+  let protocol = &mut ctx.accounts.protocol_state;
+
   require!(protocol.is_active(), FronsciersError::ProtocolPaused);
+
+  // SECURITY: Manuscript must be Pending — prevents duplicate refunds/splits
+  // This is the primary guard against the multiple-refund drain attack (C9)
   require!(manuscript.is_pending(), FronsciersError::ManuscriptNotPending);
   require!(!manuscript.has_reviewer(&ctx.accounts.reviewer.key()), FronsciersError::ReviewerAlreadyAdded);
-  
+
   // Strict self-review validation
   require!(ctx.accounts.reviewer.key() != manuscript.author, FronsciersError::CannotReviewOwnManuscript);
 
@@ -73,7 +76,7 @@ pub fn handler(
     let cpi_context = CpiContext::new_with_signer(cpi_program.clone(), cpi_accounts, signer_seeds);
     token::transfer(cpi_context, reserve_amount)?;
 
-    // ── FRONS token rewards (unchanged) ──
+    // ── FRONS token rewards ──
     let cpi_accounts = MintTo {
       mint: ctx.accounts.frons_mint.to_account_info(),
       to: ctx.accounts.escrow_token_account.to_account_info(),
@@ -82,7 +85,11 @@ pub fn handler(
     let cpi_context = CpiContext::new_with_signer(cpi_program.clone(), cpi_accounts, signer_seeds);
     token::mint_to(cpi_context, FRONS_REWARD)?;
 
-    let total_reviewer_rewards = REVIEWER_REWARD * (manuscript.reviewers.len() as u64);
+    // SECURITY: Use checked arithmetic to prevent overflow (H3)
+    let reviewer_count = manuscript.reviewers.len() as u64;
+    let total_reviewer_rewards = REVIEWER_REWARD
+        .checked_mul(reviewer_count)
+        .ok_or(FronsciersError::ArithmeticOverflow)?;
     let cpi_accounts = MintTo {
       mint: ctx.accounts.frons_mint.to_account_info(),
       to: ctx.accounts.reviewer_escrow_token_account.to_account_info(),
@@ -92,14 +99,16 @@ pub fn handler(
     token::mint_to(cpi_context, total_reviewer_rewards)?;
 
     // Track protocol revenue
-    protocol.total_revenue_usdc += SUBMISSION_FEE;
-    
+    protocol.total_revenue_usdc = protocol.total_revenue_usdc
+        .checked_add(SUBMISSION_FEE)
+        .ok_or(FronsciersError::ArithmeticOverflow)?;
+
     msg!("Manuscript accepted — fee split: platform={}, pool={}, author={}, reserve={}",
       platform_amount, pool_amount, author_amount, reserve_amount);
 
   } else if rejection_count >= MIN_REVIEWS as usize {
     manuscript.status = ManuscriptStatus::Rejected;
-    
+
     let escrow_seeds = &[ESCROW_SEED, &[ctx.accounts.escrow.bump]];
     let signer_seeds = &[&escrow_seeds[..]];
     let cpi_program = ctx.accounts.token_program.to_account_info();
@@ -124,11 +133,13 @@ pub fn handler(
     token::transfer(cpi_context, REJECTION_KEEP)?;
 
     // Track protocol partial revenue ($5 kept)
-    protocol.total_revenue_usdc += REJECTION_KEEP;
+    protocol.total_revenue_usdc = protocol.total_revenue_usdc
+        .checked_add(REJECTION_KEEP)
+        .ok_or(FronsciersError::ArithmeticOverflow)?;
 
     msg!("Manuscript rejected — $45 refunded, $5 kept in treasury");
   }
-  
+
   msg!("Review recorded: {} - {:?}", manuscript.ipfs_hash, decision);
   Ok(())
 }
@@ -155,6 +166,7 @@ pub struct ReviewManuscript<'info> {
 
   // ── Protocol state (fee config) ──
   #[account(
+    mut,
     seeds = [PROTOCOL_SEED],
     bump = protocol_state.bump
   )]

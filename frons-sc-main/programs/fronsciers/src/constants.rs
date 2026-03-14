@@ -29,7 +29,7 @@ pub const CHAT_RESERVE_BPS: u16 = 2000;              // 20%
 // ── DOCI constants ──
 pub const DOCI_REGISTRY_SEED: &[u8] = b"doci_registry";
 pub const DOCI_MANUSCRIPT_SEED: &[u8] = b"doci_manuscript";
-pub const CURRENT_YEAR: u16 = 2024;
+pub const CURRENT_YEAR: u16 = 2026;
 pub const DOCI_PREFIX: &str = "10.fronsciers/manuscript";
 
 // ── BPS helper ──

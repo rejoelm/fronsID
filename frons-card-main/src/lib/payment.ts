@@ -20,7 +20,11 @@ export interface PaymentResponse {
 
 export async function createPayment(orderData: OrderData): Promise<PaymentResponse> {
   try {
-    const orderId = `FRONSCIERS-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    // Use cryptographically secure random values for order ID generation
+    const randomBytes = new Uint8Array(12);
+    crypto.getRandomValues(randomBytes);
+    const randomHex = Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    const orderId = `FRONSCIERS-${Date.now()}-${randomHex}`;
     const amount = orderData.quantity * 225000; // IDR 225,000 per card
 
     const paymentRequest = {

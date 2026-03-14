@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const UNAUTHENTICATED_PAGES = ["/", "/refresh", "/search", "/leaderboard", "/article"];
-
-function isPublicUserProfile(pathname: string): boolean {
-  const usernamePattern = /^\/[a-zA-Z0-9_-]+$/;
-  return usernamePattern.test(pathname);
-}
+const UNAUTHENTICATED_PAGES = ["/", "/refresh"];
 
 export const config = {
   matcher: [
@@ -29,14 +24,14 @@ export async function middleware(req: NextRequest) {
   if (
     UNAUTHENTICATED_PAGES.some(
       (page) => pathname === page || pathname.startsWith(`${page}/`)
-    ) ||
-    isPublicUserProfile(pathname)
+    )
   ) {
     return NextResponse.next();
   }
 
-  const definitelyAuthenticated = Boolean(cookieAuthToken);
-  const maybeAuthenticated = Boolean(cookieSession);
+  // Validate token exists and has reasonable length (basic format check)
+  const definitelyAuthenticated = Boolean(cookieAuthToken?.value && cookieAuthToken.value.length > 20);
+  const maybeAuthenticated = Boolean(cookieSession?.value && cookieSession.value.length > 10);
 
   if (!definitelyAuthenticated && maybeAuthenticated) {
     const refreshUrl = new URL("/refresh", req.url);
@@ -51,6 +46,10 @@ export async function middleware(req: NextRequest) {
     const homeUrl = new URL("/", req.url);
     return NextResponse.redirect(homeUrl);
   }
+
+  // TODO: In production, verify the Privy JWT token signature here:
+  // const isValid = await verifyPrivyToken(cookieAuthToken.value);
+  // if (!isValid) { redirect to home }
 
   return NextResponse.next();
 }

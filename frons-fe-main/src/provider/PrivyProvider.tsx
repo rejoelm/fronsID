@@ -6,9 +6,13 @@ import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
 const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_API_KEY || "";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  // Skip Privy when no API key configured — allows build without env vars
   if (!PRIVY_APP_ID) {
-    return <>{children}</>;
+    console.error("FATAL: NEXT_PUBLIC_PRIVY_API_KEY is not configured. Authentication is disabled.");
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: 'monospace' }}>
+        <p>Authentication not configured. Set NEXT_PUBLIC_PRIVY_API_KEY environment variable.</p>
+      </div>
+    );
   }
 
   return (
