@@ -1,0 +1,9 @@
+fastmcp>=2.0.0
+fastapi>=0.115.0
+uvicorn>=0.34.0
+httpx>=0.28.0
+supabase>=2.13.0
+solders>=0.25.0
+solana>=0.36.0
+python-dotenv>=1.1.0
+pydantic>=2.10.0

@@ -4,40 +4,16 @@ import { ThemeProvider } from "next-themes";
 import Providers from "@/provider/PrivyProvider";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { Toaster } from "@/components/ui/toaster";
+import { AdminSidebar } from "@/components/admin-sidebar";
 import "./globals.css";
 
 const dmSans = DM_Sans({ subsets: ["latin"] });
 // const spectral = Spectral({ subsets: ["latin"], weight: ["200", "300", "400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
-  title: "Fronsciers — Publish. Cite. Earn. | Blockchain Academic Publishing",
+  title: "FRONS Admin Console | Fronsciers Ecosystem Management",
   description:
-    "Publish faster with transparent peer reviews, permanent on-chain storage, and earn every time AI cites your work. Starting from just $50.",
-  keywords: [
-    "academic publishing",
-    "blockchain",
-    "peer review",
-    "DOCI",
-    "NFT",
-    "Solana",
-    "open access",
-    "research",
-    "citation earnings",
-  ],
-  openGraph: {
-    title: "Fronsciers — Publish. Cite. Earn.",
-    description:
-      "Blockchain-powered academic publishing. Transparent peer reviews, permanent on-chain storage, and citation earnings for researchers.",
-    type: "website",
-    siteName: "Fronsciers",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Fronsciers — Publish. Cite. Earn.",
-    description:
-      "Blockchain-powered academic publishing. Transparent peer reviews, permanent on-chain storage, and citation earnings.",
-  },
+    "Administrative console for the Fronsciers ecosystem. Manage users, articles, citations, revenue, subscriptions, and protocol parameters.",
   icons: {
     icon: "/Logo.png",
   },
@@ -57,7 +33,12 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <Providers>
             <LoadingProvider>
-              {children}
+              <div className="flex min-h-screen bg-[#F8F8FD]">
+                <AdminSidebar />
+                <main className="flex-1 ml-[260px] transition-all duration-300">
+                  {children}
+                </main>
+              </div>
               <Toaster />
             </LoadingProvider>
           </Providers>

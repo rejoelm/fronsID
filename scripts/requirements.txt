@@ -1,0 +1,8 @@
+pandas>=2.2.0
+numpy>=2.1.0
+pyarrow>=18.0.0
+supabase>=2.13.0
+solana>=0.36.0
+solders>=0.25.0
+python-dotenv>=1.1.0
+httpx>=0.28.0

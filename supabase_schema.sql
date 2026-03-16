@@ -1,3 +1,13 @@
+-- ============================================================================
+-- FRONS Ecosystem - Legacy Base Schema
+-- ============================================================================
+-- NOTE: The full production schema (46 tables, 7 functions, 50+ RLS policies)
+-- is located at: packages/supabase/migrations/001_complete_schema.sql
+--
+-- This file contains the original 5 base tables for backward compatibility.
+-- For new deployments, run the migration file instead.
+-- ============================================================================
+--
 -- Run this in your Supabase SQL Editor
 
 -- 1. Create the Users table
